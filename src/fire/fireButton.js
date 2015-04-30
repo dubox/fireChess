@@ -29,7 +29,10 @@ var fire_menuLayer = cc.Layer.extend({
 		var fire_back = new cc.MenuItemImage(
 				res.fire_back,
 				res.fire_back_sel,
-				function () {
+				res.fire_back,
+				function (btn) {
+					btn.getParent().pubCallBack(btn);
+					
 					cc.director.runScene(new fireMenuScene());
 				}, this);
 		fire_back.attr({
@@ -40,8 +43,9 @@ var fire_menuLayer = cc.Layer.extend({
 		var fire_guize = new cc.MenuItemImage(
 				res.fire_guize,
 				res.fire_guize_sel,
-				function () {
-
+				res.fire_guize,
+				function (btn) {
+					btn.getParent().pubCallBack(btn);
 				}, this);
 		fire_guize.attr({
 			x: this.MainNode.width-60, 
@@ -51,7 +55,10 @@ var fire_menuLayer = cc.Layer.extend({
 		var fire_huiqi = new cc.MenuItemImage(
 				res.fire_huiqi,
 				res.fire_huiqi_sel,
-				function () {
+				res.fire_huiqi,
+				function (btn) {
+					btn.getParent().pubCallBack(btn);
+					
 					that.getParent().getChildByName('gl').backChess();
 				}, this);
 		fire_huiqi.attr({
@@ -62,18 +69,23 @@ var fire_menuLayer = cc.Layer.extend({
 		var fire_chonglai = new cc.MenuItemImage(
 				res.fire_chonglai,
 				res.fire_chonglai_sel,
-				function () {
+				res.fire_chonglai,
+				function (btn) {
+					btn.getParent().pubCallBack(btn);
 					that.getParent().getChildByName('gl').newGame();
 				}, this);
 		fire_chonglai.attr({
 			x: 160, 
 			y: 100,
 		});
-
+		
+		//交换
 		var fire_jiaohuan = new cc.MenuItemImage(
 				res.fire_jiaohuan,
 				res.fire_jiaohuan_sel,
-				function () {
+				res.fire_jiaohuan,
+				function (btn) {
+					btn.getParent().pubCallBack(btn);
 
 					fire.gameConfig.color.reverse();
 					var tmp = fire.userData.a;
@@ -92,7 +104,10 @@ var fire_menuLayer = cc.Layer.extend({
 		var fire_pifu = new cc.MenuItemImage(
 				res.fire_pifu,
 				res.fire_pifu_sel,
-				function () {
+				res.fire_pifu,
+				function (btn) {
+					btn.getParent().pubCallBack(btn);
+					
 					var skin = fire.runtime.skin+1;
 					if(skin>3)skin = 1;
 					that.getParent().getChildByName('gl').skin(skin);
@@ -110,7 +125,10 @@ var fire_menuLayer = cc.Layer.extend({
 		var fire_dice_btn = new cc.MenuItemImage(
 				res.fire_dices_btn,
 				res.fire_dices_btn,
-				function () {
+				res.fire_dices_btn,
+				function (btn) {
+					btn.getParent().pubCallBack(btn);
+					
 					if(fire.runtime.status == 'roundStart')
 						that.getParent().getChildByName('gl').shakeDice();
 				}, this);
@@ -118,6 +136,7 @@ var fire_menuLayer = cc.Layer.extend({
 			x: this.MainNode.width/2, 
 			y: 100,
 		});
+		fire_dice_btn.name = 'fire_dice_btn';
 
 
 
@@ -125,9 +144,24 @@ var fire_menuLayer = cc.Layer.extend({
 		menu.x = 0;
 		menu.y = 0;
 		this.MainNode.addChild(menu, 0);
+		
+		menu.pubCallBack = function(btn){
+			//音效
+			if(btn.name == 'fire_dice_btn'){
+				
+			}else{
+				cc.audioEngine.playEffect(res.fire_au_beep);
+			}
+		};
 
+		this.menu = menu;
 
-
+	},
+	//禁用所有按钮  用于游戏结束
+	disAllBtns:function(){
+		//var chs = this.menu.getChildren();
+		this.menu.setEnabled(false);
+		
 	}
 });
 

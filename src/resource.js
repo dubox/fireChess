@@ -38,6 +38,7 @@ var res = {
 		fire_b2hou : "res/fire/buttons/b2hou.png",
 		fire_score_board : "res/fire/score_board.png",
 		fire_playerA : "res/fire/playerA.png",
+		fire_playerB : "res/fire/playerB.png",
 		fire_playerAI : "res/fire/playerAI.png",
 		fire_dices_png : "res/fire/dices.png",
 		fire_dices_plist : "res/fire/dices.plist",
@@ -55,7 +56,24 @@ var res = {
 		fire_chess3_png : "res/fire/skin3/chess.png",
 		fire_alertx : "res/fire/alertx.png",
 		fire_alertb : "res/fire/alertb.png",
+		fire_alertBG_body : "res/fire/alertBG_body.png",
+		fire_alertBG_top : "res/fire/alertBG_top.png",
 		fire_gameover : "res/fire/result.png",
+		fire_rule_plist : "res/fire/rule/fire_rule.plist",
+		fire_rule_png : "res/fire/rule/fire_rule.png",
+		
+		
+		
+		fire_au_beep : "res/fire/au/beep.mp3",	//按钮
+		fire_au_click : "res/fire/au/click.mp3",	//选中棋子
+		fire_au_click1 : "res/fire/au/click1.mp3",
+		fire_au_connect : "res/fire/au/connect.mp3",	//胜利
+		fire_au_dconnect : "res/fire/au/dconnect.mp3",	//失败 ，平
+		fire_au_dead1 : "res/fire/au/dead1.mp3",
+		fire_au_dice : "res/fire/au/dice.mp3",	//骰子
+		fire_au_error1 : "res/fire/au/error1.mp3",	//错误
+		fire_au_move : "res/fire/au/move.mp3",	//走棋
+		fire_au_moveerr : "res/fire/au/moveerr.mp3",
     
 };
 

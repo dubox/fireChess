@@ -47,7 +47,8 @@ var mainMenuLayer = cc.Layer.extend({
 		var main_btn_huo = new cc.MenuItemImage(
 				res.main_btn_huo,
 				res.main_btn_huo_sel,
-				function () {
+				function (btn) {
+					btn.getParent().pubCallBack(btn);
 					cc.director.runScene(new fireMenuScene());
 				}, this);
 		main_btn_huo.attr({
@@ -58,8 +59,8 @@ var mainMenuLayer = cc.Layer.extend({
 		var main_btn_shu = new cc.MenuItemImage(
 				res.main_btn_shu,
 				res.main_btn_shu_sel,
-				function () {
-
+				function (btn) {
+					btn.getParent().pubCallBack(btn);
 				}, this);
 		main_btn_shu.attr({
 			x: this.MainNode.width /2,
@@ -69,8 +70,8 @@ var mainMenuLayer = cc.Layer.extend({
 		var main_btn_qita = new cc.MenuItemImage(
 				res.main_btn_qita,
 				res.main_btn_qita_sel,
-				function () {
-
+				function (btn) {
+					btn.getParent().pubCallBack(btn);
 				}, this);
 		main_btn_qita.attr({
 			x: this.MainNode.width /2,
@@ -81,7 +82,13 @@ var mainMenuLayer = cc.Layer.extend({
 		menu.x = 0;
 		menu.y = 0;
 		this.MainNode.addChild(menu, 0);
-
+		
+		menu.pubCallBack = function(btn){
+			//音效
+			
+				cc.audioEngine.playEffect(res.fire_au_beep);
+			
+		};
 
 		return true;
 	}
@@ -96,6 +103,8 @@ var mainMenuScene = cc.Scene.extend({
 		//var customClass = cc.CustomClass.create();
 		//var msg = customClass.helloMsg();
 		//cc.log("customClass's msg is : " + msg);
+	
+		
 	}
 });
 

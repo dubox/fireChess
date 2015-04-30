@@ -35,7 +35,7 @@ var fire_showLayer = cc.Layer.extend({
 		headImgA.attr({
 			x: 43,
 			y: fire_score_board.height / 2,
-
+			scale:0.6
 		});
 		fire_score_board.addChild(headImgA, 0);
 		//玩家b头像
@@ -43,24 +43,26 @@ var fire_showLayer = cc.Layer.extend({
 		headImgB.attr({
 			x: fire_score_board.width - 43,
 			y: fire_score_board.height / 2,
-
+			scale:0.6
 		});
 		fire_score_board.addChild(headImgB, 0);
+		fire.userData.a.headImgShow = headImgA;
+		fire.userData.b.headImgShow = headImgB;
 
 		//玩家a分数
-		var scoreA = new cc.LabelTTF('00',  '黑体', 40, cc.size(320,40), cc.TEXT_ALIGNMENT_CENTER);
+		var scoreA = new cc.LabelTTF('00',  '黑体', 40, cc.size(320,46), cc.TEXT_ALIGNMENT_CENTER);
 		scoreA.setFontFillColor(cc.color('#333333'));
 		scoreA.attr({
 			x: 90,
-			y: fire_score_board.height / 2,
+			y: fire_score_board.height / 2 +10,
 		});
 		fire_score_board.addChild(scoreA, 0);
 		//玩家b分数
-		var scoreB = new cc.LabelTTF('00',  '黑体', 40, cc.size(320,40), cc.TEXT_ALIGNMENT_CENTER);
+		var scoreB = new cc.LabelTTF('00',  '黑体', 40, cc.size(320,46), cc.TEXT_ALIGNMENT_CENTER);
 		scoreB.setFontFillColor(cc.color('#333333'));
 		scoreB.attr({
 			x: fire_score_board.width - 90,
-			y: fire_score_board.height / 2,
+			y: fire_score_board.height / 2 +10,
 		});
 		fire_score_board.addChild(scoreB, 0);
 		fire.userData.a.scoreShow = scoreA;
@@ -218,33 +220,163 @@ var fire_showLayer = cc.Layer.extend({
 		menu.x = 0;
 		menu.y = 0;
 		this.alertB.addChild(menu, 0);
+		
+		
+		
+		//游戏规则
+		cc.spriteFrameCache.addSpriteFrames(res.fire_rule_plist);
+		this.ruleBatchNode = new cc.SpriteBatchNode(res.fire_rule_png, 14);
+		
+		
+		var rule_go = cc.Menu.extend({
+			
+			ctor : function(){
+				this._super();
+				cc.log(this);
+
+				var that = this;
+				
+
+				var margin = 80;
+				var go6 = new cc.MenuItemImage(
+						'#go1.png',
+						'#go1.png',
+						function (btn) {
+
+							that.callBack(btn);
+						}, this);
+				
+				
+				this.addChild(go6, 0)
+				
+				
+			},
+		});
+		
+		var rule_go_menu = new rule_go();
+		
+	
+		
+		var rule_go_list = this.alertBg(500);
+		rule_go_list.addChild(rule_go_menu,0,'rule_go_list');
+		this.MainNode.addChild(rule_go_list, 0,'a');
+		
+		
+		
 	},
+	
+	alertBg:function(height ){
+		
+		if(typeof this.alert == 'undefined')this.alert = [];
+		
+		var alertSp = new cc.Sprite();
+		alertSp.setContentSize(0, height);
+		alertSp.attr ({
+				
+				x:this.MainNode.width/2,
+				y:this.MainNode.height/2,
+				
+		});
+		
+		
+		
+		var alertBG_top = new cc.Sprite(res.fire_alertBG_top);
+		alertBG_top.attr({
+			
+			y: alertSp.height,
+		});
+		alertSp.addChild(alertBG_top, 0);
+		
+		var alertBG_bottom = new cc.Sprite(res.fire_alertBG_top);
+		alertBG_bottom.attr({
+
+			flippedY:true
+		});
+		alertSp.addChild(alertBG_bottom, 0);
+		
+		var alertBG_body = new cc.Sprite(res.fire_alertBG_body);
+		alertBG_body.attr({
+			y: alertSp.height /2,
+			scaleY:height-40
+		});
+		alertSp.addChild(alertBG_body, 0);
+		
+		return alertSp;
+	},
+	
+	
 	//兵变
 	showAlertB:function(){
 		this.alertB.setVisible(true);
 	},
-
-	showGameover:function(score,isWin){
+	
+	//游戏结束 结算框
+	showGameover:function(user,isWin,score){
+		
+		//蒙版
+		var bgLayer = new cc.LayerColor(cc.color(0, 0, 0, 155));
+		this.addChild(bgLayer, 0);
+		
+		
 		//game over
-		if(isWin){
-			var gameOver = new cc.Sprite(res.fire_gameover,cc.rect(0,405,540,405));
+		if(isWin > 0){	
+			var gameOver = new cc.Sprite(res.fire_gameover,cc.rect(0,405,540,405));//胜
+		}else if(isWin == 0){
+			var gameOver = new cc.Sprite(res.fire_gameover,cc.rect(0,0,540,405));//平
 		}else{
-			var gameOver = new cc.Sprite(res.fire_gameover,cc.rect(0,0,540,405));
+			var gameOver = new cc.Sprite(res.fire_gameover,cc.rect(0,810,540,405));//负
 		}
 		gameOver.attr({
-			x: this.MainNode.width /2,
-			y: this.MainNode.height / 2,
+			x: cc.winSize.width /2,
+			y: cc.winSize.height / 2,
+			scale:cc.winSize.width / gameOver.width
 			//visible:false
 		});
-		this.MainNode.addChild(gameOver, 0,'gameOver');
-
-		var Txt = new cc.LabelTTF(''+score,  '黑体', 30, cc.size(200,30), cc.TEXT_ALIGNMENT_CENTER);
-		Txt.setFontFillColor(cc.color('#ffffff'));
-		Txt.attr({
-			x: gameOver.width /2,
-			y: 120,
-		});
-		gameOver.addChild(Txt, 0);
+		this.addChild(gameOver, 0,'gameOver');
+		
+		
+		if(isWin > 0 || isWin < 0){
+			
+			var Txt = new cc.LabelTTF('获胜方：',  '黑体', 40, cc.size(200,66), cc.TEXT_ALIGNMENT_CENTER);
+			Txt.setFontFillColor(cc.color('#ffffff'));
+			Txt.attr({
+				x: 200,
+				y: 128,
+			});
+			var head =  new cc.Sprite(fire.userData[user].headImg);
+			head.attr({
+				x: 300,
+				y: 128,
+				scale:0.8
+			});
+			gameOver.addChild(Txt, 0);
+			gameOver.addChild(head, 0);
+		}else{
+			var Txt = new cc.LabelTTF(score+' : '+score,  '黑体', 40, cc.size(200,66), cc.TEXT_ALIGNMENT_CENTER);
+			Txt.setFontFillColor(cc.color('#ffffff'));
+			Txt.attr({
+				x: gameOver.width / 2,
+				y: 133,
+			});
+			var heada =  new cc.Sprite(fire.userData['a'].headImg);
+			heada.attr({
+				x: 150,
+				y: 133,
+				scale:0.8
+			});
+			var headb =  new cc.Sprite(fire.userData['b'].headImg);
+			headb.attr({
+				x: 390,
+				y: 133,
+				scale:0.8
+			});
+			gameOver.addChild(Txt, 0);
+			gameOver.addChild(heada, 0);
+			gameOver.addChild(headb, 0);
+		}
+		
+		
+		
 	},
 
 	showAlertX:function(text,cb1,cb2){

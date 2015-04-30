@@ -92,7 +92,7 @@ var fire_gameLayer = cc.Layer.extend({
 			
 			if(fire.runtime.timeLeft <= 0){
 				clearInterval(fire.runtime.timer);
-				that.gameOver();
+				that.gameOver('time');
 				
 			}
 		},1000);
@@ -113,6 +113,8 @@ var fire_gameLayer = cc.Layer.extend({
 		fire.runtime.playerNow = fire.runtime.playerNow=='a'?'b':'a';
 		
 		fire.runtime.chessSel=false;	//当前选中棋子的位置
+		//还原骰子
+		this.getParent().getChildByName('sl').shakeDice('clear');
 		fire.runtime.dice=-1;		//骰子当前点数
 		fire.runtime.chessable=null;	//
 		
@@ -126,7 +128,8 @@ var fire_gameLayer = cc.Layer.extend({
 	},
 	roundEnd:function(grid){
 		
-		fire.runtime.status='roundEnd';
+		if(fire.runtime.status != 'gameOver')fire.runtime.status='roundEnd';
+		
 		var that = this;
 		//隐藏可走（绿块）
 		this.forGameData(function(grid){
@@ -140,14 +143,15 @@ var fire_gameLayer = cc.Layer.extend({
 		this.qipan.getChildByName('target').attr(fire.gameData[grid[0]][grid[1]].xy);
 		this.qipan.getChildByName('target').setVisible(true);
 		
-		//还原骰子
-		this.getParent().getChildByName('sl').shakeDice('clear');
 		
-		if(fire.runtime.status == 'gameOver'){
+		
+		if(fire.runtime.status == 'gameOver')
 			return false;
-		}
 		
+			
 		this.roundStart();
+			
+		
 		
 	},
 	gameOver:function(type){
@@ -156,9 +160,38 @@ var fire_gameLayer = cc.Layer.extend({
 		
 		if(type == 'wang'){
 			//当前玩家吃了对方的王
+			var winner = fire.runtime.playerNow;
+			
 		}else if(type == 'time'){
 			//时间到
+			//调用胜负提示框
+			if(fire.userData.a.score > fire.userData.b.score){
+				var winner = 'a';
+			}else if(fire.userData.a.score == fire.userData.b.score){//平局
+				var winner = 'ab';
+			}else{
+				var winner = 'b';
+			}
+
 		}
+		//cc.log('aaa'+winner)
+		if(winner == 'ab'){
+			this.getParent().getChildByName('sl').showGameover(winner,0,fire.userData.a.score);
+			
+			cc.audioEngine.playEffect(res.fire_au_dconnect);
+		}else if(fire.userData[winner].isAI){
+			//机器胜 显示失败框
+			this.getParent().getChildByName('sl').showGameover(winner,-1);
+			
+			cc.audioEngine.playEffect(res.fire_au_dconnect);
+		}else{
+			this.getParent().getChildByName('sl').showGameover(winner,1);
+			
+			cc.audioEngine.playEffect(res.fire_au_connect);
+		}
+		
+		
+		
 		
 		
 		
@@ -170,14 +203,8 @@ var fire_gameLayer = cc.Layer.extend({
 		
 		cc.log('gameOver');
 		
-		if(fire.userData.a.score > fire.userData.b.score){
-			this.getParent().getChildByName('sl').showGameover(fire.userData.a.score,true);
-		}else if(fire.userData.a.score == fire.userData.b.score){//平局
-			this.getParent().getChildByName('sl').showGameover(fire.userData.a.score,false);
-		}else{
-			this.getParent().getChildByName('sl').showGameover(fire.userData.b.score,true);
-		}
-		
+		//禁用按钮
+		this.getParent().getChildByName('ml').disAllBtns();
 		
 		cc.eventManager.addListener(cc.EventListener.create({
 			event: cc.EventListener.TOUCH_ONE_BY_ONE,
@@ -212,6 +239,7 @@ var fire_gameLayer = cc.Layer.extend({
 	},
 	//悔棋
 	backChess:function(){
+		if(fire.runtime.status == 'gameOver')return false;
 		
 		var lastStep = fire.runtime.log.pop();
 		if(typeof lastStep != 'undefined' ){//cc.log('qq')
@@ -281,16 +309,7 @@ var fire_gameLayer = cc.Layer.extend({
 		
 	},
 	
-	//改变runTime参数
-	runTime:function(data){
-		if(fire.runtime.status == 'gameOver'){
-			alert('gameOver');
-			return false;
-		}
-		for(var i in data){
-			fire.runtime[i] = data[i];
-		}
-	},
+	
 	score:function(score){
 		
 		if(score == 'clear'){
@@ -310,6 +329,7 @@ var fire_gameLayer = cc.Layer.extend({
 	},
 	
 	selChess:function(grid){
+		cc.audioEngine.playEffect(res.fire_au_click);
 		fire.runtime.chessSel = grid;//选中
 		
 		this.qipan.getChildByName('source').attr(fire.gameData[grid[0]][grid[1]].xy);
@@ -541,11 +561,14 @@ var fire_gameLayer = cc.Layer.extend({
 		return tag;
 	},
 	moveChess:function(gridNow,gridTar){
-
+		
+		if(fire.runtime.status == 'gameOver')return false;
+		
+		cc.audioEngine.playEffect(res.fire_au_move);//音效
+		
 		var type = 'move';
 		var score = 0;
 		
-			
 		
 			if(fire.gameData[gridTar[0]][gridTar[1]].chess){
 				type = 'eat';
@@ -685,6 +708,7 @@ var fire_gameLayer = cc.Layer.extend({
 		var that = this;
 		
 		if(fire.runtime.status != 'diced'){
+			cc.audioEngine.playEffect(res.fire_au_error1);
 			this.showAlertX('请先掷骰子，后走棋！');
 			return false;
 		}
@@ -694,6 +718,7 @@ var fire_gameLayer = cc.Layer.extend({
 				if(that.isInchessable(grid)){//点击棋子为可走棋子
 					that.selChess(grid);
 				}else{
+					cc.audioEngine.playEffect(res.fire_au_error1);
 					that.showAlertX('请走选中的棋子！');
 					return false;
 				}
@@ -703,12 +728,14 @@ var fire_gameLayer = cc.Layer.extend({
 			if(clickData['chess']){	//当前位置有棋
 
 				if(that.isInchessable(grid)){//点击棋子为可走棋子  则选中
+					
 					that.selChess(grid);
 				}else{
 					//吃
 					if(that.isInchessable(fire.runtime.chessSel,grid)){	//查询是否可吃
 						that.moveChess(fire.runtime.chessSel, grid);
 					}else{
+						cc.audioEngine.playEffect(res.fire_au_error1);
 						that.showAlertX('走棋规则不正确！');
 					}
 				}
@@ -718,6 +745,7 @@ var fire_gameLayer = cc.Layer.extend({
 				if(that.isInchessable(fire.runtime.chessSel,grid)){	//查询是否可走
 					that.moveChess(fire.runtime.chessSel, grid);
 				}else{
+					cc.audioEngine.playEffect(res.fire_au_error1);
 					that.showAlertX('走棋规则不正确！');
 				}
 			}
@@ -733,7 +761,9 @@ var fire_gameLayer = cc.Layer.extend({
 	},
 	shakeDice : function(){
 		
-		if(fire.runtime.status != 'roundStart')return false;
+		cc.audioEngine.playEffect(res.fire_au_dice);//音效
+		
+		if(fire.runtime.status != 'roundStart' || fire.runtime.status == 'gameOver')return false;
 		
 		var chessType = -1;
 		var chessTypes = [0, 1, 3, 5, 9];
@@ -1068,8 +1098,8 @@ var fire_gameScene = cc.Scene.extend({
 				b:{
 					color:'g',
 					score:0,
-					headImg:res.fire_playerAI,
-					isAI:fire_gameType_rj,
+					headImg:res.fire_playerB,
+					isAI:false,
 				},			
 		};
 
@@ -1087,6 +1117,12 @@ var fire_gameScene = cc.Scene.extend({
 
 
 		};
+		
+		if(fire_gameType_rj){
+			fire.userData.b.headImg = res.fire_playerAI;
+			fire.userData.b.isAI = true;
+		}
+		
 		
 		//this.addChild(mainLayer,0);
 		this.addChild(new fire_gameLayer(),0,'gl');

@@ -1,7 +1,7 @@
 
 
 
-var fire_gameType_rj = true;//是否人机对战	游戏场景直接用此值作为playerB的isAI
+var fire_gameType_rj = true;//是否人机对战	
 var fireMenuLayer = cc.Layer.extend({
 	sprite:null,
 	ctor:function () {
@@ -50,7 +50,9 @@ var fireMenuLayer = cc.Layer.extend({
 		var fire_back = new cc.MenuItemImage(
 				res.fire_back,
 				res.fire_back_sel,
-				function () {
+				function (btn) {
+					btn.getParent().pubCallBack(btn);
+					
 					cc.director.runScene(new mainMenuScene());
 				}, this);
 		fire_back.attr({
@@ -62,7 +64,9 @@ var fireMenuLayer = cc.Layer.extend({
 		var main_btn_rr = new cc.MenuItemImage(
 				res.fire_rr,
 				res.fire_rr_sel,
-				function () {
+				function (btn) {
+					btn.getParent().pubCallBack(btn);
+					
 					fire_gameType_rj = false;
 					cc.director.runScene(new fire_gameScene());
 				}, this);
@@ -76,7 +80,9 @@ var fireMenuLayer = cc.Layer.extend({
 		var main_btn_rj = new cc.MenuItemImage(
 				res.fire_rj,
 				res.fire_rj_sel,
-				function () {
+				function (btn) {
+					btn.getParent().pubCallBack(btn);
+					
 					fire_gameType_rj = true;
 					cc.director.runScene(new fire_gameScene());
 				}, this);
@@ -94,6 +100,12 @@ var fireMenuLayer = cc.Layer.extend({
 		menu.y = 0;
 		this.MainNode.addChild(menu, 0);
 
+		menu.pubCallBack = function(btn){
+			//音效
+			
+			cc.audioEngine.playEffect(res.fire_au_beep);
+			
+		};
 
 		return true;
 	}
