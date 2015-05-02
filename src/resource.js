@@ -40,6 +40,8 @@ var res = {
 		fire_playerA : "res/fire/playerA.png",
 		fire_playerB : "res/fire/playerB.png",
 		fire_playerAI : "res/fire/playerAI.png",
+		fire_show_p_left : "res/fire/show_p_left.png",
+		fire_show_p_right : "res/fire/show_p_right.png",
 		fire_dices_png : "res/fire/dices.png",
 		fire_dices_plist : "res/fire/dices.plist",
 		fire_dices_btn : "res/fire/dice.png",
@@ -61,6 +63,16 @@ var res = {
 		fire_gameover : "res/fire/result.png",
 		fire_rule_plist : "res/fire/rule/fire_rule.plist",
 		fire_rule_png : "res/fire/rule/fire_rule.png",
+		fire_rule_go1 : "res/fire/rule/go1.png",
+		fire_rule_go2 : "res/fire/rule/go2.png",
+		fire_rule_go3 : "res/fire/rule/go3.png",
+		fire_rule_go4 : "res/fire/rule/go4.png",
+		fire_rule_go5 : "res/fire/rule/go5.png",
+		fire_rule_go6 : "res/fire/rule/go6.png",
+		fire_rule_put1 : "res/fire/rule/put1.png",
+		fire_rule_put2 : "res/fire/rule/put2.png",
+		fire_rule_put3 : "res/fire/rule/put3.png",
+		fire_rule_put4 : "res/fire/rule/put4.png",
 		
 		
 		

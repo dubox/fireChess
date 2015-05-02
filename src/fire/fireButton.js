@@ -47,6 +47,7 @@ var fire_menuLayer = cc.Layer.extend({
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
 				}, this);
+		fire_guize.name = 'guize';
 		fire_guize.attr({
 			x: this.MainNode.width-60, 
 			y: this.MainNode.height-50,
@@ -151,6 +152,10 @@ var fire_menuLayer = cc.Layer.extend({
 				
 			}else{
 				cc.audioEngine.playEffect(res.fire_au_beep);
+			}
+			
+			if(btn.name == 'guize'){
+				that.getParent().getChildByName('sl').rule_show('go');
 			}
 		};
 

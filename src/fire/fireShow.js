@@ -88,7 +88,23 @@ var fire_showLayer = cc.Layer.extend({
 				cc.spriteFrameCache.getSpriteFrame('tt.png')
 		);
 		this.timeBatchNode.addChild(time_tt, 0);
+		
 
+		//当前玩家提示动画
+		this.show_p_left = new cc.Sprite(res.fire_show_p_left);
+		this.show_p_left.attr({x: 135,
+			y: fire_score_board.height / 2 ,});
+		
+		fire_score_board.addChild(this.show_p_left, 1);
+		
+		this.show_p_right = new cc.Sprite(res.fire_show_p_right);
+		this.show_p_right.attr({x: fire_score_board.width - 135,
+			y: fire_score_board.height / 2 ,});
+
+		fire_score_board.addChild(this.show_p_right, 1);
+		
+		
+		
 
 		//骰子资源
 		cc.spriteFrameCache.addSpriteFrames(res.fire_dices_plist);
@@ -100,7 +116,8 @@ var fire_showLayer = cc.Layer.extend({
 
 		//this.showTime(fire.gameConfig.gameTime);
 
-
+		
+		
 
 		//弹窗
 		var alertX = new cc.Sprite(res.fire_alertx);
@@ -223,46 +240,346 @@ var fire_showLayer = cc.Layer.extend({
 		
 		
 		
-		//游戏规则
+		//游戏规则资源
 		cc.spriteFrameCache.addSpriteFrames(res.fire_rule_plist);
-		this.ruleBatchNode = new cc.SpriteBatchNode(res.fire_rule_png, 14);
-		
-		
-		var rule_go = cc.Menu.extend({
-			
+		//this.ruleBatchNode = new cc.SpriteBatchNode(res.fire_rule_png, 14);
+		//走棋规则列表
+		this.rule_go = cc.Menu.extend({
+
 			ctor : function(){
 				this._super();
-				cc.log(this);
+				//cc.log(this);
 
 				var that = this;
-				
 
-				var margin = 80;
-				var go6 = new cc.MenuItemImage(
+
+				var go1 = new cc.MenuItemImage(
 						'#go1.png',
 						'#go1.png',
 						function (btn) {
-
 							that.callBack(btn);
 						}, this);
-				
-				
-				this.addChild(go6, 0)
-				
-				
+				this.addChild(go1, 0,'go1');
+
+				var go2 = new cc.MenuItemImage(
+						'#go2.png',
+						'#go2.png',
+						function (btn) {
+							that.callBack(btn);
+						}, this);
+				this.addChild(go2, 0,'go2');
+
+				var go3 = new cc.MenuItemImage(
+						'#go3.png',
+						'#go3.png',
+						function (btn) {
+							that.callBack(btn);
+						}, this);
+				this.addChild(go3, 0,'go3');
+
+				var go4 = new cc.MenuItemImage(
+						'#go4.png',
+						'#go4.png',
+						function (btn) {
+							that.callBack(btn);
+						}, this);
+				this.addChild(go4, 0,'go4');
+
+				var go5 = new cc.MenuItemImage(
+						'#go5.png',
+						'#go5.png',
+						function (btn) {
+							that.callBack(btn);
+						}, this);
+				this.addChild(go5, 0,'go5');
+
+				var go6 = new cc.MenuItemImage(
+						'#go6.png',
+						'#go6.png',
+						function (btn) {
+							that.callBack(btn);
+						}, this);
+				this.addChild(go6, 0,'go6');
+
+
+				this.attr({x:0,y:250});
+				this.alignItemsVertically();
+
+
+
+
+				var close = new cc.MenuItemImage(
+						res.fire_close,
+						res.fire_close,
+						function (btn) {
+							that.callBack(btn);
+						}, this);
+				close.attr({
+					x:180,
+					y:320
+				});
+				this.addChild(close, 0,'close');
 			},
+			
+			callBack:function(btn){
+				that.rule_show(btn.getName());
+			}
 		});
 		
-		var rule_go_menu = new rule_go();
+		this.rule_put = cc.Menu.extend({
+
+			ctor : function(){
+				this._super();
+				//cc.log(this);
+
+				var that = this;
+
+
+
+				var put1 = new cc.MenuItemImage(
+						'#put1.png',
+						'#put1.png',
+						function (btn) {
+							that.callBack(btn);
+						}, this);
+				this.addChild(put1, 0,'put1');
+
+				var put2 = new cc.MenuItemImage(
+						'#put2.png',
+						'#put2.png',
+						function (btn) {
+							that.callBack(btn);
+						}, this);
+				this.addChild(put2, 0,'put2');
+
+				var put3 = new cc.MenuItemImage(
+						'#put3.png',
+						'#put3.png',
+						function (btn) {
+							that.callBack(btn);
+						}, this);
+				this.addChild(put3, 0,'put3');
+
+				var put4 = new cc.MenuItemImage(
+						'#put4.png',
+						'#put4.png',
+						function (btn) {
+							that.callBack(btn);
+						}, this);
+				this.addChild(put4, 0,'put4');
+
+				 
+
+
+				this.attr({x:0,y:200});
+				this.alignItemsVertically();
+
+
+
+
+				var close = new cc.MenuItemImage(
+						res.fire_close,
+						res.fire_close,
+						function (btn) {
+							that.callBack(btn);
+						}, this);
+				close.attr({
+					x:180,
+					y:300
+				});
+				this.addChild(close, 0,'close');
+			},
+			callBack:function(btn){
+				that.rule_show(btn.getName());
+			}
+		});
 		
+		
+	},
+	//run or stop玩家提示动画
+	show_p_runAction:function(user,type){
+		
+		if(user == 'a'){
+			
+			if(type === false){
+				this.show_p_left.stopAllActions();
+				this.show_p_left.x = 135;
+				this.show_p_left.opacity = 255;
+			}else{
+				this.show_p_left.runAction(this.show_p_Action(this.show_p_left,20));
+				
+			}
+		}else if(user == 'b'){
+			if(type === false){
+				this.show_p_right.stopAllActions();
+				this.show_p_right.x = 454 - 135;
+				this.show_p_right.opacity = 255;
+			}else{
+				this.show_p_right.runAction(this.show_p_Action(this.show_p_right,-20));
+				
+			}
+		}
+		
+		
+		//
+	},
+	//玩家提示动画
+	show_p_Action:function(sprite , move){
+		
+		var posX = sprite.x;
+		var show_p_Action = cc.repeatForever(cc.sequence(cc.spawn(cc.moveTo(0.5, cc.p( posX - move,sprite.y)).easing(cc.easeIn(0.5)), cc.fadeOut(1)), cc.delayTime(0.5), cc.callFunc(function () {
+			sprite.x = sprite.x + move;
+			sprite.opacity = 255;
+		}, this)));
+		return show_p_Action;
+	},
 	
+	//游戏规则
+	rule_show:function(type){
 		
-		var rule_go_list = this.alertBg(500);
-		rule_go_list.addChild(rule_go_menu,0,'rule_go_list');
-		this.MainNode.addChild(rule_go_list, 0,'a');
+		var that = this;
+		
+		if(type == 'close' || this.MainNode.getChildByName('rule_list')){
+			this.MainNode.getChildByName('rule_list').removeFromParent(true);
+			
+		}
+
+		if(type == 'go'){
+			var rule_go_menu = new this.rule_go();
+			
+			var rule_go_list = this.alertBg(570);
+			rule_go_list.addChild(rule_go_menu,0,'rule_go_list');
+			var go_tab = this.rule_tab('go','put');
+			go_tab.attr({x:0,y:535});
+			rule_go_list.addChild(go_tab,0,'go_tab');
+
+			this.MainNode.addChild(rule_go_list, 0,'rule_list');
+		}else if(type=='put'){
+			var rule_put_menu = new this.rule_put();
+
+			var rule_put_list = this.alertBg(500);
+			rule_put_list.addChild(rule_put_menu,0,'rule_put_list');
+			
+			var put_tab = this.rule_tab('put','go');
+			put_tab.attr({x:0,y:445});
+			rule_put_list.addChild(put_tab,0,'put_tab');
+
+			this.MainNode.addChild(rule_put_list, 0,'rule_list');
+			
+			
+		}else if(type.indexOf('go') != -1){
+			
+			
+			var rule_go_list = this.alertBg(570);
+			
+			var _con = new cc.Sprite(res['fire_rule_'+type]);
+			_con.attr({x:0,y:270});
+			rule_go_list.addChild(_con,0);
+			
+			var go_tab = this.rule_tab('go','put');
+			go_tab.attr({x:0,y:515});
+			rule_go_list.addChild(go_tab,0,'go_tab');
+			
+			var close = new cc.MenuItemImage(
+					res.fire_close,
+					res.fire_close,
+					function (btn) {
+						that.rule_show('close');
+					}, this);
+			close.attr({
+				x:180,
+				y:570
+			});
+
+			var back2list = new cc.MenuItemImage(
+					res.fire_back2list,
+					res.fire_back2list_sel,
+					function (btn) {
+						//btn.getParent().getParent().removeFromParent(true);
+						that.rule_show('go');
+					}, this);
+			back2list.attr({
+				x:0,
+				y:35
+			});
+
+			var menu = new cc.Menu(close,back2list);
+			menu.attr({x:0,y:0});
+			rule_go_list.addChild(menu,0);
+			
+			this.MainNode.addChild(rule_go_list, 0,'rule_list');
+		}else if(type.indexOf('put') != -1){
+
+
+			var rule_put_list = this.alertBg(570);
+
+			var _con = new cc.Sprite(res['fire_rule_'+type]);
+			_con.attr({x:0,y:270});
+			rule_put_list.addChild(_con,0);
+
+			var put_tab = this.rule_tab('put','go');
+			put_tab.attr({x:0,y:515});
+			rule_put_list.addChild(put_tab,0,'put_tab');
+			
+			var close = new cc.MenuItemImage(
+					res.fire_close,
+					res.fire_close,
+					function (btn) {
+						that.rule_show('close');
+					}, this);
+			close.attr({
+				x:180,
+				y:570
+			});
+			
+			var back2list = new cc.MenuItemImage(
+					res.fire_back2list,
+					res.fire_back2list_sel,
+					function (btn) {
+						//btn.getParent().getParent().removeFromParent(true);
+						that.rule_show('put');
+					}, this);
+			back2list.attr({
+				x:0,
+				y:35
+			});
+			
+			var menu = new cc.Menu(close,back2list);
+			menu.attr({x:0,y:0});
+			rule_put_list.addChild(menu,0);
+
+			this.MainNode.addChild(rule_put_list, 0,'rule_list');
+		}
 		
 		
+
+
 		
+	},
+	//游戏规则列表中的tab切换
+	rule_tab:function(s,b){
+		
+		var that = this;
+		
+		var tab = new cc.Sprite('#'+s+'Sp.png');
+		
+		
+		var _btn = new cc.MenuItemImage(
+				'#'+b+'.png',
+				'#'+b+'.png',
+				function () {
+					that.rule_show(b);
+				}, this);
+		if(s == 'go'){
+			_btn.attr({x:234,y:29});
+		}else{
+			_btn.attr({x:79,y:29});
+		}
+		var menu = new cc.Menu(_btn);
+		//menu.addChild(_btn, 0);
+		menu.attr({x:0,y:0});
+		tab.addChild(menu, 0);
+		return tab;
 	},
 	
 	alertBg:function(height ){

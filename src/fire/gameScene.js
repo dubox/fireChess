@@ -118,6 +118,8 @@ var fire_gameLayer = cc.Layer.extend({
 		fire.runtime.dice=-1;		//骰子当前点数
 		fire.runtime.chessable=null;	//
 		
+		//提醒玩家走棋
+		this.getParent().getChildByName('sl').show_p_runAction(fire.runtime.playerNow);
 		
 		
 		if(fire.userData[fire.runtime.playerNow].isAI){
@@ -131,6 +133,10 @@ var fire_gameLayer = cc.Layer.extend({
 		if(fire.runtime.status != 'gameOver')fire.runtime.status='roundEnd';
 		
 		var that = this;
+		
+		//停止提醒玩家走棋动画
+		this.getParent().getChildByName('sl').show_p_runAction(fire.runtime.playerNow,false);
+		
 		//隐藏可走（绿块）
 		this.forGameData(function(grid){
 			that.qipan.getChildByName(fire.gameData[grid[0]][grid[1]].enSprite).setVisible(false);
@@ -763,6 +769,7 @@ var fire_gameLayer = cc.Layer.extend({
 		
 		cc.audioEngine.playEffect(res.fire_au_dice);//音效
 		
+		
 		if(fire.runtime.status != 'roundStart' || fire.runtime.status == 'gameOver')return false;
 		
 		var chessType = -1;
@@ -1129,6 +1136,10 @@ var fire_gameScene = cc.Scene.extend({
 		this.addChild(new fire_menuLayer(),0,'ml');
 		this.addChild(new fire_showLayer(),0,'sl');
 		
+	},
+	onExit:function(){
+		//解决点返回退出时 计时器没有被clear
+		if(fire.runtime.timer)clearInterval(fire.runtime.timer);
 	}
 });
 
