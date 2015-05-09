@@ -13,7 +13,7 @@ var fireMenuLayer = cc.Layer.extend({
 
 
 		// 背景图
-		var menuBg = new cc.Sprite(res.main_menuBg);
+		var menuBg = new cc.Sprite(res.fire_menuBg);
 		menuBg.attr({
 			x: size.width / 2,
 			y: size.height / 2,

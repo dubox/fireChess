@@ -7,3 +7,28 @@ if(cc.winSize.width / cc.winSize.height < 9/16){
 	var displayMode = 'height';
 }
 */
+
+
+
+
+
+
+
+
+
+
+
+
+//公共函数
+
+//取随机整数
+function random(start,end){
+	return parseInt(Math.random()*(end-start)+start);
+}
+
+
+//随机在数组中取一个元素
+function arrRandom(arr){
+	return arr[random(0,arr.length-1)];
+}
+

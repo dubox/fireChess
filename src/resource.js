@@ -1,6 +1,7 @@
 var res = {
 		mainNodeBg : "res/mainNodeBg.png",
-		main_menuBg : "res/fire/menuBg.jpg",
+		main_menuBg : "res/menuBg.jpg",
+		fire_menuBg : "res/fire/menuBg.jpg",
 		fire_logo : "res/fire/logo.png",
 		main_btn_huo : "res/fire/buttons/huoyan.png",
 		main_btn_huo_sel : "res/fire/buttons/huoyan_sel.png",
@@ -75,7 +76,7 @@ var res = {
 		fire_rule_put4 : "res/fire/rule/put4.png",
 		
 		
-		
+		//音频
 		fire_au_beep : "res/fire/au/beep.mp3",	//按钮
 		fire_au_click : "res/fire/au/click.mp3",	//选中棋子
 		fire_au_click1 : "res/fire/au/click1.mp3",
@@ -86,7 +87,76 @@ var res = {
 		fire_au_error1 : "res/fire/au/error1.mp3",	//错误
 		fire_au_move : "res/fire/au/move.mp3",	//走棋
 		fire_au_moveerr : "res/fire/au/moveerr.mp3",
-    
+		
+		
+		//数独
+		sd_HelloWorld_png : "res/shudu/HelloWorld.jpg",
+		sd_qt_sel : 		"res/shudu/qt_sel.png",
+		sd_qt_dissel : 		"res/shudu/qt_dissel.png",
+		sd_start_png : 		"res/shudu/start.png",
+		sd_start_sel_png : 		"res/shudu/starts.png",
+		sd_btn1 : 			"res/shudu/btn1.png",
+		sd_btn1s : 			"res/shudu/btn1s.png",
+		sd_btn2 : 			"res/shudu/btn2.png",
+		sd_btn2s : 			"res/shudu/btn2s.png",
+		sd_btn3 : 			"res/shudu/btn3.png",
+		sd_btn3s : 			"res/shudu/btn3s.png",
+		sd_btn3d : 			"res/shudu/btn3d.png",
+		sd_subBtn : 		"res/shudu/subBtn.png",
+		sd_back_png : 		"res/shudu/back.png",
+		sd_back_sel_png : 		"res/shudu/back_sel.png",
+		sd_right_png : 		"res/shudu/right.png",
+		sd_right_sel_png : 		"res/shudu/right_sel.png",
+		sd_time_panel : 	"res/shudu/time_panel.png",
+		sd_msgNum : 		"res/shudu/msg_num.png",
+		sd_next : 		"res/shudu/next.png",
+		sd_nexts : 		"res/shudu/nexts.png",
+		sd_replay : 		"res/shudu/replay.png",
+		sd_replays : 		"res/shudu/replays.png",
+		sd_continue : 		"res/shudu/continue.png",
+		sd_continues : 		"res/shudu/continues.png",
+		sd_btnOpen : 		"res/shudu/open.png",
+		sd_btnOpen_sel : 		"res/shudu/opens.png",
+		sd_jiesuan : 		"res/shudu/jiesuan.png",
+		sd_topList : 		"res/shudu/top-list.png",
+		sd_topLists : 		"res/shudu/top-lists.png",
+		sd_sel1 : 			"res/shudu/sel1.png",
+		sd_sel1s : 			"res/shudu/sel1s.png",
+		sd_sel2 : 			"res/shudu/sel2.png",
+		sd_sel2s : 			"res/shudu/sel2s.png",
+		sd_sel3 : 			"res/shudu/sel3.png",
+		sd_sel3s : 			"res/shudu/sel3s.png",
+		sd_sel3d : 			"res/shudu/sel3d.png",
+		sd_selBtnPenal : 			"res/shudu/selBtnPenal.png",
+		sd_topListBg : 			"res/shudu/top_list.png",
+                                 
+		sd_q3 : 			"res/shudu/q3.png",
+		sd_q3_1_1 : 		"res/shudu/q3_1_1.png",
+		sd_q3_1_2 : 		"res/shudu/q3_1_2.png",
+		sd_q3_1_3 : 		"res/shudu/q3_1_3.png",
+		sd_q3_1_4 : 		"res/shudu/q3_1_4.png",
+		sd_btn_1_1 : 		"res/shudu/btn_1_1.png",
+		sd_btn_1_2 : 		"res/shudu/btn_1_2.png",
+		sd_btn_1_3 : 		"res/shudu/btn_1_3.png",
+		sd_btn_1_4 : 		"res/shudu/btn_1_4.png",
+		sd_btn_1_1s : 		"res/shudu/btn_1_1s.png",
+		sd_btn_1_2s : 		"res/shudu/btn_1_2s.png",
+		sd_btn_1_3s : 		"res/shudu/btn_1_3s.png",
+		sd_btn_1_4s : 		"res/shudu/btn_1_4s.png",
+		sd_q3_2_1 : 		"res/shudu/q3_2_1.png",
+		sd_q3_2_2 : 		"res/shudu/q3_2_2.png",
+		sd_q3_2_3 : 		"res/shudu/q3_2_3.png",
+		sd_q3_2_4 : 		"res/shudu/q3_2_4.png",
+		sd_btn_2_1 : 		"res/shudu/btn_2_1.png",
+		sd_btn_2_2 : 		"res/shudu/btn_2_2.png",
+		sd_btn_2_3 : 		"res/shudu/btn_2_3.png",
+		sd_btn_2_4 : 		"res/shudu/btn_2_4.png",
+		sd_btn_2_1s : 		"res/shudu/btn_2_1s.png",
+		sd_btn_2_2s : 		"res/shudu/btn_2_2s.png",
+		sd_btn_2_3s : 		"res/shudu/btn_2_3s.png",
+		sd_btn_2_4s : 		"res/shudu/btn_2_4s.png",
+        
+		sd_q4 : "res/shudu/q4.png"
 };
 
 var g_resources = [];

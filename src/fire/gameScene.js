@@ -118,6 +118,8 @@ var fire_gameLayer = cc.Layer.extend({
 		fire.runtime.dice=-1;		//骰子当前点数
 		fire.runtime.chessable=null;	//
 		
+		//停止提醒玩家走棋动画
+		this.getParent().getChildByName('sl').show_p_runAction(fire.runtime.playerNow,false);
 		//提醒玩家走棋
 		this.getParent().getChildByName('sl').show_p_runAction(fire.runtime.playerNow);
 		

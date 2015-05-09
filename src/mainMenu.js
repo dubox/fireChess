@@ -8,7 +8,6 @@ var mainMenuLayer = cc.Layer.extend({
 
 		var size = cc.winSize;
 		
-
 		// 背景图
 		var menuBg = new cc.Sprite(res.main_menuBg);
 		menuBg.attr({
@@ -61,6 +60,7 @@ var mainMenuLayer = cc.Layer.extend({
 				res.main_btn_shu_sel,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
+					cc.director.runScene(new shuduMenuScene());
 				}, this);
 		main_btn_shu.attr({
 			x: this.MainNode.width /2,
@@ -72,6 +72,8 @@ var mainMenuLayer = cc.Layer.extend({
 				res.main_btn_qita_sel,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
+					
+					var h = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "openUrll", "(Ljava/lang/String;)V", "http://m.lianzhong.com");
 				}, this);
 		main_btn_qita.attr({
 			x: this.MainNode.width /2,
@@ -111,21 +113,6 @@ var mainMenuScene = cc.Scene.extend({
 
 
 
-
-
-
-//公共函数
-
-//取随机整数
-function random(start,end){
-	return parseInt(Math.random()*(end-start)+start);
-}
-
-
-//随机在数组中取一个元素
-function arrRandom(arr){
-	return arr[random(0,arr.length-1)];
-}
 
 
 
