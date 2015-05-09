@@ -33,9 +33,10 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.WindowManager;
-import android.widget.Toast;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
+import android.widget.Toast;
 
 
 // The name of .so is specified in AndroidMenifest.xml. NativityActivity will load it automatically for you.
@@ -43,8 +44,8 @@ import android.net.Uri;
 
 public class AppActivity extends Cocos2dxActivity{
 
+	private static AppActivity api = null;
     static String hostIPAdress = "0.0.0.0";
-	private static AppActivity app = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
@@ -59,7 +60,8 @@ public class AppActivity extends Cocos2dxActivity{
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
         hostIPAdress = getHostIpAddress();
-		app = this;
+		
+		api = this;
     }
     
     @Override
@@ -82,18 +84,30 @@ public class AppActivity extends Cocos2dxActivity{
         return hostIPAdress;
     }
 	
-	public static void getTest(final String url) {
-		app.runOnUiThread(new Runnable() {
+	//test js to java
+	public static String hello(String msg){
+        return msg;
+    }
+	/*********
+	调用手机默认浏览器打开链接
+	
+	**************/	
+	public static void openUrll(final String url) {
+        // TODO Auto-generated method stub
+		//ui相关的操作需要在ui线程中运行
+		api.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //Toast.makeText(app, "wodeshen", Toast.LENGTH_LONG).show();
-				Uri uri = Uri.parse(url);
-				Intent intent = new Intent(Intent.ACTION_VIEW,uri);
-				app.startActivity(intent);
+                Uri uri = Uri.parse(url);  
+				 Intent it = new Intent(Intent.ACTION_VIEW, uri);  
+				 api.startActivity(it);
             }
         });
-		//return "aldksjflajsdklfjaksdj";
+		
+         
     }
+	
+	
     
     private static native boolean nativeIsLandScape();
     private static native boolean nativeIsDebug();
