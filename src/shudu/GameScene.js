@@ -100,8 +100,8 @@ var shuduGameMainLayer = cc.Layer.extend({
         var backBtn = new cc.MenuItemImage(
             res.sd_back_png,
             res.sd_back_png,
-            function () {
-
+            function (btn) {
+            	that.btnPubCallBack(btn);
             	cc.director.runScene(new shuduMenuScene());
             }, this);
         backBtn.attr({
@@ -127,7 +127,8 @@ var shuduGameMainLayer = cc.Layer.extend({
         var rightBtn = new cc.MenuItemImage(
             res.sd_right_png,
             res.sd_right_sel_png,
-            function () {
+            function (btn) {
+            	that.btnPubCallBack(btn);
                 that.chageGuan(1);
             }, this);
         rightBtn.attr({
@@ -135,8 +136,19 @@ var shuduGameMainLayer = cc.Layer.extend({
             y: size.height -60,
             scale : shudu.UI.scale,
         });
+        
 
-        var menu = new cc.Menu(backBtn,rightBtn);
+        //排名按钮
+        this.topList = new cc.MenuItemImage(//3X3
+        		res.sd_topList,
+        		res.sd_topLists,
+        		function (btn) {
+        			that.btnPubCallBack(btn);
+        			that.showTopList();
+        		}, this);
+        this.topList.attr({x: size.width - 180,	y: size.height -60,scale : shudu.UI.scale,});
+
+        var menu = new cc.Menu(backBtn,rightBtn,this.topList);
         menu.x = 0;
         menu.y = 0;
         this.MainNode.addChild(menu, 1);
@@ -146,24 +158,26 @@ var shuduGameMainLayer = cc.Layer.extend({
         this.subBtn = new cc.MenuItemImage(//3X3
             res.sd_subBtn,
             res.sd_subBtn,
-            function () {
+            function (btn) {
+            	that.btnPubCallBack(btn);
                 that._submit();
 
             }, this);
-        this.subBtn.attr({x:this.MainNode.width / 4,y:80,scale : shudu.UI.scale,});
+        this.subBtn.attr({x:this.MainNode.width *3/ 4+10,y:80,scale : shudu.UI.scale,});
         
-        //排名按钮
-        this.topList = new cc.MenuItemImage(//3X3
-        		res.sd_topList,
-        		res.sd_topLists,
-        		function () {
-        			
-        			that.showTopList();
-        		}, this);
-        this.topList.attr({x:this.MainNode.width *3/ 4,y:80,scale : shudu.UI.scale,});
         
+        //重玩按钮  （面板上的）
+        this.replayBtn2 = new cc.MenuItemImage(//3X3
+        		res.sd_replay2,
+        		res.sd_replay2s,
+        		function (btn) {
+        			that.btnPubCallBack(btn);
+        			that.replay();
 
-        var bottomBtn = new cc.Menu(this.subBtn,this.topList);
+        		}, this);
+        this.replayBtn2.attr({x:this.MainNode.width / 4-10,y:80,scale : shudu.UI.scale,});
+
+        var bottomBtn = new cc.Menu(this.subBtn,this.replayBtn2);
         bottomBtn.x = 0;
         bottomBtn.y = 0;
         this.MainNode.addChild(bottomBtn, 1);
@@ -173,7 +187,8 @@ var shuduGameMainLayer = cc.Layer.extend({
             this.btnOpen = new cc.MenuItemImage(
                 res.sd_btnOpen,
                 res.sd_btnOpen_sel,
-                function () {
+                function (btn) {
+                	that.btnPubCallBack(btn);
                     //4x4 翻开棋子
                     if (shudu.Q4Opened > 0 && shudu.gameData[shudu.gameData_sel]['chess']==null) {//cc.log(that.Qt); //当该格没有棋子时 执行翻开
                         var p = that.moveChess(parseInt(that.Qt[1][shudu.gameData_sel])-1, shudu.gameData_sel);
@@ -181,6 +196,9 @@ var shuduGameMainLayer = cc.Layer.extend({
                         that.openNum.setString(shudu.Q4Opened);
                         shudu.gameData[shudu.gameData_sel]['chess']['chenge'] = false;
                         this.showDisMove(p);
+                        
+                        shudu.gameData_sel = false; //当前选中的格子
+                        shudu.selBtn_sel = false; //当前选中的棋子按钮
                     }
                 },
                 this);
@@ -188,8 +206,8 @@ var shuduGameMainLayer = cc.Layer.extend({
             this.btnOpen.attr({x:this.MainNode.width / 4,y:80,scale : shudu.UI.scale,});
             bottomBtn.addChild(this.btnOpen, 0);
             
-            //4阶 提交按钮在中间
-            this.subBtn.attr({x:this.MainNode.width / 2,y:80});
+            //4阶 重玩按钮在中间
+            this.replayBtn2.attr({x:this.MainNode.width / 2,y:80});
 
             //剩余翻开机会
             var openNum = new cc.LabelTTF(shudu.Q4Opened, 'Times New Roman', 52, cc.size(70, 70), cc.TEXT_ALIGNMENT_CENTER,0,cc.VERTICAL_TEXT_ALIGNMENT_CENTER);
@@ -227,9 +245,9 @@ var shuduGameMainLayer = cc.Layer.extend({
 
         var replay = new cc.MenuItemImage(
         		res.sd_replay,
-        		res.sd_replays,
+        		res.sd_replay,
         		function (btn) {
-        			//
+        			that.btnPubCallBack(btn);
         			//cc.log(btn)
         			//if(typeof btn.cb == 'function')btn.cb();
         			that.replay();
@@ -244,7 +262,7 @@ var shuduGameMainLayer = cc.Layer.extend({
         		res.sd_continue,
         		res.sd_continues,
         		function (btn) {
-        			//
+        			that.btnPubCallBack(btn);
         			//cc.log(btn)
         			//if(typeof btn.cb == 'function')btn.cb();
         			alertX.setVisible(false);
@@ -277,7 +295,7 @@ var shuduGameMainLayer = cc.Layer.extend({
         		res.sd_replay,
         		res.sd_replays,
         		function (btn) {
-        			//
+        			that.btnPubCallBack(btn);
         			//cc.log(btn)
         			//if(typeof btn.cb == 'function')btn.cb();
         			that.setTopList();
@@ -294,7 +312,7 @@ var shuduGameMainLayer = cc.Layer.extend({
         		res.sd_next,
         		res.sd_nexts,
         		function (btn) {
-        			//
+        			that.btnPubCallBack(btn);
         			//cc.log(btn)
         			//if(typeof btn.cb == 'function')btn.cb();
         			
@@ -384,6 +402,7 @@ var shuduGameMainLayer = cc.Layer.extend({
         		res.fire_ok,
         		res.fire_ok_sel,
         		function (btn) {
+        			that.btnPubCallBack(btn);
         			topList.setVisible(false);
         		}, this);
         btn_ok.attr({
@@ -396,6 +415,7 @@ var shuduGameMainLayer = cc.Layer.extend({
         		res.fire_close,
         		res.fire_close,
         		function (btn) {
+        			that.btnPubCallBack(btn);
         			topList.setVisible(false);
         		}, this);
         btn_close.attr({
@@ -435,6 +455,11 @@ var shuduGameMainLayer = cc.Layer.extend({
         return true;
     },
     
+    //按钮公共函数
+    btnPubCallBack:function(btn){
+    	cc.audioEngine.playEffect(res.fire_au_beep);
+    },
+    
     showTopList:function(){
     	
     	if(!this.topList.getChildByName('list')){
@@ -452,10 +477,18 @@ var shuduGameMainLayer = cc.Layer.extend({
     	var data = this.getTopList('Q'+shudu.gameType+'_'+this.Qt[0]);
     	
     	for(var i in data){
-    		var dataTxt = new cc.LabelTTF('\t\tNo.'+(parseInt(i)+1)+'\t\t\t\t'+data[i][0],  '黑体', 50, cc.size(490,75), cc.TEXT_ALIGNMENT_LEFT);
+    		var dataTxt = new cc.LabelTTF('  No.'+(parseInt(i)+1),  '黑体', 50, cc.size(190,75), cc.TEXT_ALIGNMENT_LEFT);
     		dataTxt.setFontFillColor(cc.color('#ffffff'));
     		dataTxt.attr({
-    			x: 490 /2,
+    			x: 190 /2,
+    			y: 540 - (i*100) -50,
+    		});
+    		list.addChild(dataTxt,0);
+    		//玩家名称
+    		var dataTxt = new cc.LabelTTF(data[i][0],  '黑体', 50, cc.size(300,75), cc.TEXT_ALIGNMENT_CENTER);
+    		dataTxt.setFontFillColor(cc.color('#ffffff'));
+    		dataTxt.attr({
+    			x: 190 + 300 /2,
     			y: 540 - (i*100) -50,
     		});
     		list.addChild(dataTxt,0);
@@ -647,7 +680,9 @@ var shuduGameMainLayer = cc.Layer.extend({
         });
         this.qt_sel.setVisible(false);
         this.qipanSprite.addChild(this.qt_sel, 0);
-
+        
+        shudu.gameData_sel = false; //当前选中的格子
+        shudu.selBtn_sel = false; //当前选中的棋子按钮
 
         if(type == 3) {
 
@@ -761,12 +796,13 @@ var shuduGameMainLayer = cc.Layer.extend({
             sel[i] = new cc.MenuItemImage(//3X3
                 res['sd_btn'+'_'+chessUI+'_'+(i+1)],
                 res['sd_btn'+'_'+chessUI+'_'+(i+1)+'s'],
-                function (Obj) {
+                function (btn) {
+                	that.btnPubCallBack(btn);
                     for(var i in sel){
                         sel[i].unselected();
                     }
-                    Obj.selected();
-                    shudu.selBtn_sel = Obj.k;
+                    btn.selected();
+                    shudu.selBtn_sel = btn.k;
                     that.play();
                 }, this);
             sel[i].k = i;
@@ -808,6 +844,9 @@ var shuduGameMainLayer = cc.Layer.extend({
             cc.log('chenge');
             return false;    //检查棋子是否可替换
         }
+        
+        cc.audioEngine.playEffect(res.fire_au_click);//音效
+        
         btn = parseInt(btn);
         qt = parseInt(qt);
         var chess = this.newChess(btn+1);

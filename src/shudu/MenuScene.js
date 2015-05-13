@@ -7,7 +7,8 @@ var shuduMenuMainLayer = cc.Layer.extend({
         //////////////////////////////
         // 1. super init first
         this._super();
-
+        
+        var that = this;
         // 背景图
         var menuBg = new cc.Sprite(res.sd_HelloWorld_png);
         menuBg.attr({
@@ -36,8 +37,8 @@ var shuduMenuMainLayer = cc.Layer.extend({
          btn[0] = new cc.MenuItemImage(//3X3
             res.sd_btn1,
             res.sd_btn1s,
-            function () {
-                cc.log("Menu is clicked!");
+            function (btn2) {
+            	that.btnPubCallBack(btn2);
                 menuClick(btn,0);
                 shudu.C_selMenu = 0;
             }, this);
@@ -53,8 +54,8 @@ var shuduMenuMainLayer = cc.Layer.extend({
          btn[1] = new cc.MenuItemImage(//4X4
             res.sd_btn2,
             res.sd_btn2s,
-            function () {
-                cc.log("Menu is clicked!");
+            function (btn2) {
+            	that.btnPubCallBack(btn2);
                 menuClick(btn,1);
                 shudu.C_selMenu = 1;
             }, this);
@@ -70,8 +71,8 @@ var shuduMenuMainLayer = cc.Layer.extend({
             res.sd_btn3,
             res.sd_btn3s,
             res.sd_btn3d,
-            function () {
-                cc.log("Menu is clicked!");
+            function (btn2) {
+            	that.btnPubCallBack(btn2);
 
                // cc.director.runScene(new GameScene()); //进入游戏场景
 
@@ -97,8 +98,8 @@ var shuduMenuMainLayer = cc.Layer.extend({
         sel[0] = new cc.MenuItemImage(//3X3
             res.sd_sel1,
             res.sd_sel1s,
-            function () {
-                cc.log("Menu is clicked!");
+            function (btn) {
+            	that.btnPubCallBack(btn);
                 menuClick(sel,0);
                 shudu.C_selSelect = 0;
                 //cc.director.runScene(new GameScene());	//进入游戏场景
@@ -116,8 +117,8 @@ var shuduMenuMainLayer = cc.Layer.extend({
         sel[1] = new cc.MenuItemImage(//4X4
             res.sd_sel2,
             res.sd_sel2s,
-            function () {
-                cc.log("Menu is clicked!");
+            function (btn) {
+            	that.btnPubCallBack(btn);
                 menuClick(sel,1);
                 shudu.C_selSelect = 1;
                 //cc.director.runScene(new GameScene()); //进入游戏场景
@@ -135,8 +136,8 @@ var shuduMenuMainLayer = cc.Layer.extend({
             res.sd_sel3,
             res.sd_sel3s,
             res.sd_sel3d,
-            function () {
-                cc.log("Menu is clicked!");
+            function (btn) {
+            	that.btnPubCallBack(btn);
 
                 // cc.director.runScene(new GameScene()); //进入游戏场景
 
@@ -160,7 +161,7 @@ var shuduMenuMainLayer = cc.Layer.extend({
 
         //
         function menuClick(arr,k){
-            for(var i in arr){
+            for(var i in arr){cc.log(i)
 
                 arr[i].unselected();
             }
@@ -172,8 +173,8 @@ var shuduMenuMainLayer = cc.Layer.extend({
         var backBtn = new cc.MenuItemImage(
         		res.sd_back_png,
         		res.sd_back_sel_png,
-        		function () {
-
+        		function (btn) {
+        			that.btnPubCallBack(btn);
         			cc.director.runScene(new mainMenuScene());
         		}, this);
         backBtn.attr({
@@ -188,8 +189,8 @@ var shuduMenuMainLayer = cc.Layer.extend({
         var startBtn = new cc.MenuItemImage(
             res.sd_start_png,
             res.sd_start_sel_png,
-            function () {
-
+            function (btn) {
+            	that.btnPubCallBack(btn);
                 //if()              //若游戏规格 和 游戏模式 没有默认值 则需要判断是否选择
 
                  cc.director.runScene(new shuduGameScene()); //进入游戏场景
@@ -210,7 +211,11 @@ var shuduMenuMainLayer = cc.Layer.extend({
        
 
             return true;
-        }
+        },
+        //按钮公共函数
+        btnPubCallBack:function(btn){
+        	cc.audioEngine.playEffect(res.fire_au_beep);
+        },
 });
 
 var shuduMenuScene = cc.Scene.extend({

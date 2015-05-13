@@ -37,6 +37,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
+import java.util.Timer;
+import android.view.KeyEvent; 
 
 
 // The name of .so is specified in AndroidMenifest.xml. NativityActivity will load it automatically for you.
@@ -45,6 +47,8 @@ import android.widget.Toast;
 public class AppActivity extends Cocos2dxActivity{
 
 	private static AppActivity api = null;
+	private static int backKey = 0;
+	private long exitTime = 0;
     static String hostIPAdress = "0.0.0.0";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +92,26 @@ public class AppActivity extends Cocos2dxActivity{
 	public static String hello(String msg){
         return msg;
     }
+	
+	/*********
+	监听后退按钮
+	实现 再按一次退出程序
+	**************/	
+	@Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK
+                && event.getAction() == KeyEvent.ACTION_DOWN
+                && event.getRepeatCount() == 0) {
+            if((System.currentTimeMillis()-exitTime)>2000){
+            	exitTime = System.currentTimeMillis();
+            	Toast.makeText(api, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            }else{
+            	android.os.Process.killProcess(android.os.Process.myPid());
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+	
 	/*********
 	调用手机默认浏览器打开链接
 	
@@ -101,7 +125,7 @@ public class AppActivity extends Cocos2dxActivity{
                 Uri uri = Uri.parse(url);  
 				 Intent it = new Intent(Intent.ACTION_VIEW, uri);  
 				 api.startActivity(it);
-            }
+			}
         });
 		
          

@@ -2,7 +2,7 @@
     "project_type": "javascript",
 
     "debugMode" : 1,
-    "showFPS" : true,
+    "showFPS" : false,
     "frameRate" : 60,
     "id" : "gameCanvas",
     "renderMode" : 0,
@@ -17,6 +17,9 @@
         "src/fire/fireMenu.js",
         "src/fire/fireShow.js",
         "src/fire/fireButton.js",
-        "src/fire/gameScene.js"
+        "src/fire/gameScene.js",
+        "src/shudu/config.js",
+        "src/shudu/MenuScene.js",
+        "src/shudu/GameScene.js"
     ]
 }

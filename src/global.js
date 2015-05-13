@@ -8,7 +8,9 @@ if(cc.winSize.width / cc.winSize.height < 9/16){
 }
 */
 
-
+var version = '1.0.2';
+var version_ser = getLocalJson('version');	//服务端版本
+var version_path = 'http://172.21.28.28/';
 
 
 
@@ -31,4 +33,63 @@ function random(start,end){
 function arrRandom(arr){
 	return arr[random(0,arr.length-1)];
 }
+
+//
+/*****
+ * 通过文件名获取json对象 如果文件不存在则创建 
+ * 原生传入 文件名，web传入kay
+ */
+
+function getLocalJson(f){
+	if(cc.sys.isNative) {
+		var writablePath = jsb.fileUtils.getWritablePath();
+		var JsonPath = writablePath+f+'.json';
+		if(!jsb.fileUtils.isFileExist(JsonPath)){
+			var json = {};
+			jsb.fileUtils.writeToFile(json, JsonPath);
+			
+		}else{
+			var json = jsb.fileUtils.getValueMapFromFile(JsonPath);
+		}
+		
+		return json;
+	}
+	
+	return false;
+}
+
+/*****
+ * 存入json对象 如果文件不存在则创建 
+ * 原生传入 文件名，web传入kay
+ */
+
+function setLocalJson(f,json){
+	if(cc.sys.isNative) {
+		var writablePath = jsb.fileUtils.getWritablePath();
+		var JsonPath = writablePath+f+'.json';
+		
+		jsb.fileUtils.writeToFile(json, JsonPath);
+
+	}
+
+	//return false;
+}
+
+
+function HttpGet(url,cb){
+	
+	var xhr = cc.loader.getXMLHttpRequest();  
+	
+	//set arguments with <URL>?xxx=xxx&yyy=yyy  
+	xhr.open("GET", url, true);  
+
+	xhr.onreadystatechange = function () {  
+		if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status <= 207)) {  
+
+			cb(xhr.responseText);
+		}  
+	};  
+	xhr.send();  
+}
+
 

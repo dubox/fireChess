@@ -73,7 +73,11 @@ var fire_menuLayer = cc.Layer.extend({
 				res.fire_chonglai,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
-					that.getParent().getChildByName('gl').newGame();
+					
+					that.getParent().getChildByName('sl').showAlertX('您确定重置游戏吗？',function(){
+						that.getParent().getChildByName('gl').newGame();
+					});
+					
 				}, this);
 		fire_chonglai.attr({
 			x: 160, 
@@ -87,15 +91,19 @@ var fire_menuLayer = cc.Layer.extend({
 				res.fire_jiaohuan,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
-
-					fire.gameConfig.color.reverse();
-					var tmp = fire.userData.a;
-					fire.userData.a = fire.userData.b;
-					fire.userData.b = tmp;
-					fire.userData.a.color = 'y';
-					fire.userData.b.color = 'g';
-					fire.gameConfig.reverse = fire.gameConfig.reverse?false:true;
-					that.getParent().getChildByName('gl').newGame();
+					
+					
+					that.getParent().getChildByName('sl').showAlertX('您确定重置游戏并交换\n走棋顺序吗？',function(){
+						fire.gameConfig.color.reverse();
+						var tmp = fire.userData.a;
+						fire.userData.a = fire.userData.b;
+						fire.userData.b = tmp;
+						fire.userData.a.color = 'y';
+						fire.userData.b.color = 'g';
+						fire.gameConfig.reverse = fire.gameConfig.reverse?false:true;
+						that.getParent().getChildByName('gl').newGame();
+					});
+					
 				}, this);
 		fire_jiaohuan.attr({
 			x: this.MainNode.width-60, 

@@ -129,7 +129,7 @@ var fire_showLayer = cc.Layer.extend({
 		this.MainNode.addChild(alertX, 0);
 		this.alertX = alertX;
 
-		var alertxTxt = new cc.LabelTTF('',  '黑体', 30, cc.size(alertX.width-20,50), cc.TEXT_ALIGNMENT_CENTER);
+		var alertxTxt = new cc.LabelTTF('',  '黑体', 30, cc.size(alertX.width-20,100), cc.TEXT_ALIGNMENT_CENTER);
 		alertxTxt.setFontFillColor(cc.color('#ffffff'));
 		alertxTxt.attr({
 			x: alertX.width /2,
