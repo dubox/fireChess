@@ -40,7 +40,7 @@ var mainMenuLayer = cc.Layer.extend({
 			x: this.MainNode.width / 2,
 			y: 700,
 		});
-		this.MainNode.addChild(fire_logo, 0); 
+		this.MainNode.addChild(fire_logo, 0);
 		
 		//按钮
 		var main_btn_huo = new cc.MenuItemImage(
@@ -336,7 +336,7 @@ var mainMenuLayer = cc.Layer.extend({
 				var target = event.getCurrentTarget();
 				var p = target.convertToNodeSpace(touch.getLocation());//cc.log(p);
 				//cc.log(target.visible)
-				if(target.getParent().visible)	//暂时获取父级可见属性   
+				if(target.EXT_getVisible())	//暂时获取父级可见属性   
 					target.onClickTrackNode(cc.rectContainsPoint(cc.rect(0, 0, target.width, target.height), p));
 			},
 		});
@@ -392,6 +392,7 @@ child_lock.timer = setInterval(function(){
 //获取最新版本信息
 HttpGet(version_path+'version.json',function(data){
 	//if(data)
+	//cc.log(data);
 	data = JSON.parse(data);
 	setLocalJson('version',data);
 	version_ser = data;
