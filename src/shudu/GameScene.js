@@ -286,14 +286,14 @@ var shuduGameMainLayer = cc.Layer.extend({
         var jiesuan = new cc.Sprite(res.sd_jiesuan);
         jiesuan.attr({
         	x: this.MainNode.width / 2,
-        	y: this.MainNode.height / 2 + 50,
+        	y: this.MainNode.height - 250,
         	scale : shudu.UI.scale,
         	visible:false,
         });
         
         var replay = new cc.MenuItemImage(
-        		res.sd_replay,
-        		res.sd_replays,
+        		res.fire_ok,
+        		res.fire_ok,
         		function (btn) {
         			that.btnPubCallBack(btn);
         			//cc.log(btn)
@@ -305,6 +305,7 @@ var shuduGameMainLayer = cc.Layer.extend({
         replay.attr({
         	x: jiesuan.width/4, 
         	y: -70,
+        	scale : 1/shudu.UI.scale,
         });
         
         //下一关

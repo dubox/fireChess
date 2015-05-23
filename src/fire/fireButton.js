@@ -171,10 +171,10 @@ var fire_menuLayer = cc.Layer.extend({
 
 	},
 	//禁用所有按钮  用于游戏结束
-	disAllBtns:function(){
+	setAllBtns:function(isEnable){
 		//var chs = this.menu.getChildren();
-		this.menu.setEnabled(false);
-		
+		this.menu.setEnabled(isEnable);
+
 	}
 });
 

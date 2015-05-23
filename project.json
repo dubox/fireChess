@@ -12,6 +12,7 @@
 
     "jsList" : [
         "src/resource.js",
+        "src/extendCC.js",
         "src/global.js",
         "src/mainMenu.js",
         "src/fire/fireMenu.js",

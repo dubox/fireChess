@@ -204,10 +204,10 @@ var mainMenuLayer = cc.Layer.extend({
 		//********弹窗end
 		
 		
+		
 		//***********************检查版本更新
-		if(typeof version_ser.ver != 'undefined' && version != version_ser.ver){
-			
-				
+		if(typeof version_ser.ver != 'undefined' && version != version_ser.ver && parseInt(version.replace(/\./g, '')) < parseInt(version_ser.ver.replace(/\./g, ''))){
+							
 			var desLines = version_ser.des.split('\n').length;
 			var txth = desLines * 30 + 50 ;	//文本高度
 			
@@ -396,7 +396,7 @@ HttpGet(version_path+'version.json',function(data){
 	data = JSON.parse(data);
 	setLocalJson('version',data);
 	version_ser = data;
-	
+
 });
 
 
