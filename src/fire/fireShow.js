@@ -92,13 +92,13 @@ var fire_showLayer = cc.Layer.extend({
 
 		//当前玩家提示动画
 		this.show_p_left = new cc.Sprite(res.fire_show_p_left);
-		this.show_p_left.attr({x: 135,
+		this.show_p_left.attr({x: 140,
 			y: fire_score_board.height / 2 ,});
 		
 		fire_score_board.addChild(this.show_p_left, 1);
 		
 		this.show_p_right = new cc.Sprite(res.fire_show_p_right);
-		this.show_p_right.attr({x: fire_score_board.width - 135,
+		this.show_p_right.attr({x: fire_score_board.width - 140,
 			y: fire_score_board.height / 2 ,});
 
 		fire_score_board.addChild(this.show_p_right, 1);
@@ -302,7 +302,7 @@ var fire_showLayer = cc.Layer.extend({
 				this.addChild(go6, 0,'go6');
 
 
-				this.attr({x:0,y:250});
+				this.attr({x:0,y:240});
 				this.alignItemsVertically();
 
 
@@ -316,7 +316,7 @@ var fire_showLayer = cc.Layer.extend({
 						}, this);
 				close.attr({
 					x:180,
-					y:320
+					y:310
 				});
 				this.addChild(close, 0,'close');
 			},
@@ -371,7 +371,7 @@ var fire_showLayer = cc.Layer.extend({
 				 
 
 
-				this.attr({x:0,y:200});
+				this.attr({x:0,y:170});
 				this.alignItemsVertically();
 
 
@@ -385,7 +385,7 @@ var fire_showLayer = cc.Layer.extend({
 						}, this);
 				close.attr({
 					x:180,
-					y:300
+					y:250
 				});
 				this.addChild(close, 0,'close');
 			},
@@ -403,19 +403,19 @@ var fire_showLayer = cc.Layer.extend({
 			
 			if(type === false){
 				this.show_p_left.stopAllActions();
-				this.show_p_left.x = 135;
+				this.show_p_left.x = 140;
 				this.show_p_left.opacity = 255;
 			}else{
-				this.show_p_left.runAction(this.show_p_Action(this.show_p_left,20));
+				this.show_p_left.runAction(this.show_p_Action(this.show_p_left,15));
 				
 			}
 		}else if(user == 'b'){
 			if(type === false){
 				this.show_p_right.stopAllActions();
-				this.show_p_right.x = 454 - 135;
+				this.show_p_right.x = 454 - 140;
 				this.show_p_right.opacity = 255;
 			}else{
-				this.show_p_right.runAction(this.show_p_Action(this.show_p_right,-20));
+				this.show_p_right.runAction(this.show_p_Action(this.show_p_right,-15));
 				
 			}
 		}
@@ -427,7 +427,7 @@ var fire_showLayer = cc.Layer.extend({
 	show_p_Action:function(sprite , move){
 		
 		var posX = sprite.x;
-		var show_p_Action = cc.repeatForever(cc.sequence(cc.spawn(cc.moveTo(0.5, cc.p( posX - move,sprite.y)).easing(cc.easeIn(0.5)), cc.fadeOut(1)), cc.delayTime(0.5), cc.callFunc(function () {
+		var show_p_Action = cc.repeatForever(cc.sequence ( cc.spawn(cc.moveTo(0.3, cc.p( posX - move,sprite.y)).easing(cc.easeIn(0.3)), cc.fadeOut(0.3)), cc.delayTime(0.3), cc.callFunc(function () {
 			sprite.x = sprite.x + move;
 			sprite.opacity = 255;
 		}, this)));
@@ -447,21 +447,21 @@ var fire_showLayer = cc.Layer.extend({
 		if(type == 'go'){
 			var rule_go_menu = new this.rule_go();
 			
-			var rule_go_list = this.alertBg(570);
+			var rule_go_list = this.alertBg(550);
 			rule_go_list.addChild(rule_go_menu,0,'rule_go_list');
 			var go_tab = this.rule_tab('go','put');
-			go_tab.attr({x:0,y:535});
+			go_tab.attr({x:0,y:515});
 			rule_go_list.addChild(go_tab,0,'go_tab');
 
 			this.MainNode.addChild(rule_go_list, 0,'rule_list');
 		}else if(type=='put'){
 			var rule_put_menu = new this.rule_put();
 
-			var rule_put_list = this.alertBg(500);
+			var rule_put_list = this.alertBg(410);
 			rule_put_list.addChild(rule_put_menu,0,'rule_put_list');
 			
 			var put_tab = this.rule_tab('put','go');
-			put_tab.attr({x:0,y:445});
+			put_tab.attr({x:0,y:375});
 			rule_put_list.addChild(put_tab,0,'put_tab');
 
 			this.MainNode.addChild(rule_put_list, 0,'rule_list');

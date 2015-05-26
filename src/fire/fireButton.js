@@ -74,7 +74,7 @@ var fire_menuLayer = cc.Layer.extend({
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
 					
-					that.getParent().getChildByName('sl').showAlertX('您确定重置游戏吗？',function(){
+					that.getParent().getChildByName('gl').showAlertX('您确定重置游戏吗？',function(){
 						that.getParent().getChildByName('gl').newGame();
 					});
 					
@@ -93,7 +93,7 @@ var fire_menuLayer = cc.Layer.extend({
 					btn.getParent().pubCallBack(btn);
 					
 					
-					that.getParent().getChildByName('sl').showAlertX('您确定重置游戏并交换\n走棋顺序吗？',function(){
+					that.getParent().getChildByName('gl').showAlertX('您确定重置游戏并交换\n走棋顺序吗？',function(){
 						fire.gameConfig.color.reverse();
 						var tmp = fire.userData.a;
 						fire.userData.a = fire.userData.b;
