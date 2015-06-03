@@ -38,6 +38,7 @@ var fire_menuLayer = cc.Layer.extend({
 		fire_back.attr({
 			x: 60, 
 			y: this.MainNode.height-50,
+			name :'back'
 		});
 
 		var fire_guize = new cc.MenuItemImage(
@@ -94,13 +95,13 @@ var fire_menuLayer = cc.Layer.extend({
 					
 					
 					that.getParent().getChildByName('gl').showAlertX('您确定重置游戏并交换\n走棋顺序吗？',function(){
-						fire.gameConfig.color.reverse();
-						var tmp = fire.userData.a;
-						fire.userData.a = fire.userData.b;
-						fire.userData.b = tmp;
-						fire.userData.a.color = 'y';
-						fire.userData.b.color = 'g';
-						fire.gameConfig.reverse = fire.gameConfig.reverse?false:true;
+						
+						//var tmp = fire.userData.a;
+						//fire.userData.a = fire.userData.b;
+						//fire.userData.b = tmp;
+						
+						fire.gameConfig.reverse = !fire.gameConfig.reverse;
+						
 						that.getParent().getChildByName('gl').newGame();
 					});
 					
@@ -172,9 +173,16 @@ var fire_menuLayer = cc.Layer.extend({
 	},
 	//禁用所有按钮  用于游戏结束
 	setAllBtns:function(isEnable){
-		//var chs = this.menu.getChildren();
-		this.menu.setEnabled(isEnable);
-
+		var btns = this.menu.getChildren();
+		//this.menu.setEnabled(isEnable);
+		for(var i in btns){
+			//cc.log(btns[i].name);
+				if(btns[i].name != 'guize' && btns[i].name != 'back'){
+					btns[i].setEnabled(isEnable);
+				}
+			
+			
+		}
 	}
 });
 

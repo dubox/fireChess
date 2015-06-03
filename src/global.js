@@ -8,7 +8,7 @@ if(cc.winSize.width / cc.winSize.height < 9/16){
 }
 */
 
-var version = '1.0.6';
+var version = '1.0.7';
 var version_ser = getLocalJson('version');	//服务端版本(从服务端获取并存在本地的版本信息)
 var version_path = 'http://210.74.155.132:8081/firechess/';
 

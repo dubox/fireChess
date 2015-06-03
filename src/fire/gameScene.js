@@ -53,7 +53,22 @@ var fire_gameLayer = cc.Layer.extend({
 		var that = this;
 		
 		fire.runtime.status = 'newGame';
-		fire.runtime.playerNow = '';
+		
+		if(fire.gameConfig.reverse){	//交换棋子和 行棋先后
+			fire.runtime.playerNow = 'a';
+			fire.gameConfig.color = ['y','g'];
+			fire.userData.a.color = 'g';
+			fire.userData.b.color = 'y';
+		}else{
+			fire.runtime.playerNow = 'b';
+			fire.gameConfig.color = ['g','y'];
+			fire.userData.a.color = 'y';
+			fire.userData.b.color = 'g';
+		}
+		fire.runtime.log = [];	//清空行期日志
+		fire.runtime.chessSel = null;
+		fire.runtime.chessable = [];
+		fire.runtime.dice = -1;
 		
 		//删除棋盘精灵
 		if(typeof this.qipan != 'undefined'){
@@ -65,7 +80,6 @@ var fire_gameLayer = cc.Layer.extend({
 
 		this.score('clear');//清除得分
 		
-		fire.runtime.log = [];	//清空行期日志
 
 		
 		this.initQipan();
@@ -90,15 +104,15 @@ var fire_gameLayer = cc.Layer.extend({
 				
 			}
 		},1000);
-		cc.log('newGame');
+		//cc.log('newGame');
 		this.roundStart();
 		
 		
 	},
-
+	
 	//回合开始
 	roundStart:function(){
-
+		
 		if(fire.runtime.status == 'gameOver'){
 			return false;
 		}
@@ -111,19 +125,15 @@ var fire_gameLayer = cc.Layer.extend({
 		this.getParent().getChildByName('sl').shakeDice('clear');
 		fire.runtime.dice=-1;		//骰子当前点数
 		fire.runtime.chessable=null;	//
-
-		//停止提醒玩家走棋动画
-		this.getParent().getChildByName('sl').show_p_runAction('a',false);
-		this.getParent().getChildByName('sl').show_p_runAction('b',false);
-		//提醒玩家走棋
-		this.getParent().getChildByName('sl').show_p_runAction(fire.runtime.playerNow);
 		
-		this.userLock(false);	//解除锁定
+		this.userRing();
+		
+		this.userLock(false); //cc.log('roundStart')	//解除锁定
 		if(fire.userData[fire.runtime.playerNow].isAI){
-			this.userLock(true);	//锁定 防止用户干扰AI
+			this.userLock(true);//cc.log('ai')	//锁定 防止用户干扰AI
 			this.AI();
 		}
-
+		
 		//this.shakeDice();
 	},
 	roundEnd:function(grid){
@@ -229,7 +239,17 @@ var fire_gameLayer = cc.Layer.extend({
 		//alert('gameOver');
 	},
 	
+	//玩家提醒
+	userRing : function(){
+		
 
+		//停止提醒玩家走棋动画
+		this.getParent().getChildByName('sl').show_p_runAction('a',false);
+		this.getParent().getChildByName('sl').show_p_runAction('b',false);
+		//提醒玩家走棋
+		this.getParent().getChildByName('sl').show_p_runAction(fire.runtime.playerNow);
+	},
+	
 	//锁定用户行为 （屏幕交互、按钮。。。）
 	userLock : function(lock){
 
@@ -239,6 +259,7 @@ var fire_gameLayer = cc.Layer.extend({
 			//禁用按钮
 			this.getParent().getChildByName('ml').setAllBtns(false);
 		}else{
+			if(fire.userData[fire.runtime.playerNow].isAI) return false; //当
 			this.qipanOnTouch();
 			this.getParent().getChildByName('ml').setAllBtns(true);
 		}
@@ -295,14 +316,14 @@ var fire_gameLayer = cc.Layer.extend({
 				this.qipan.getChildByName('target').setVisible(false);
 				this.qipan.getChildByName('source').setVisible(false);
 			}
-
-
+			
+			this.userRing();
 			return false;
 		}
 		//cc.log(fire.runtime.playerNow)
 		//针对 人机对战 机器先走  机器走第一步 玩家就悔棋 悔棋后 机器不能自动走棋bug
-		if(fire.runtime.playerNow == 'a' && fire.userData['a'].isAI){
-			fire.runtime.playerNow = 'b';
+		if(fire.userData[fire.runtime.playerNow].isAI){
+			fire.runtime.playerNow = 'a';
 			this.roundStart();
 		}
 		//
@@ -398,7 +419,14 @@ var fire_gameLayer = cc.Layer.extend({
 		var qipanBatchNode = new cc.SpriteBatchNode(fire.gameConfig['skin'+fire.runtime.skin].chess_png, 98);
 		
 		
-		this.forGameData(function(data){	//表示可走棋子和可走位置的绿块
+		//最后移动棋子的效果
+		var target = new cc.Sprite('#target.png');
+		target.setVisible(false);
+		qipanBatchNode.addChild(target, 0,'target');
+		
+
+		//表示可走棋子和可走位置的绿块
+		this.forGameData(function(data){	
 			var enable = new cc.Sprite('#enable.png');
 			enable.attr(fire.gameData[data[0]][data[1]].xy);
 			enable.setVisible(false);
@@ -410,11 +438,6 @@ var fire_gameLayer = cc.Layer.extend({
 		var source = new cc.Sprite('#source.png');
 		source.setVisible(false);
 		qipanBatchNode.addChild(source, 0,'source');
-		
-		//最后移动棋子的效果
-		var target = new cc.Sprite('#target.png');
-		target.setVisible(false);
-		qipanBatchNode.addChild(target, 0,'target');
 		
 		this.qipanSp = this.qipan;
 		
@@ -600,9 +623,9 @@ var fire_gameLayer = cc.Layer.extend({
 		return tag;
 	},
 	moveChess:function(gridNow,gridTar){
-
-		if(fire.runtime.status == 'gameOver')return false;
-
+		
+		if(fire.runtime.status != 'diced')return false;
+		
 		cc.audioEngine.playEffect(res.fire_au_move);//音效
 		var that = this;
 		var type = 'move';
@@ -760,11 +783,11 @@ var fire_gameLayer = cc.Layer.extend({
 		var that = this;
 		this.userLock(true);	//打开弹窗  锁定用户操作
 		this.getParent().getChildByName('sl').showAlertX(text,function(){
-			cb1 && cb1();
 			that.userLock(false);
+			cb1 && cb1();			
 		},function(){
-			cb2 && cb2();
 			that.userLock(false);
+			cb2 && cb2();			
 		});
 	},
 	qipanTouchCallback:function(grid){
@@ -824,11 +847,11 @@ var fire_gameLayer = cc.Layer.extend({
 	},
 	shakeDice : function(){
 		
-		cc.audioEngine.playEffect(res.fire_au_dice);//音效
-		
-		
-		if(fire.runtime.status != 'roundStart' || fire.runtime.status == 'gameOver')return false;
+		if(fire.runtime.status != 'roundStart'){
+			return false;
+		}
 		fire.runtime.status='diced';
+		cc.audioEngine.playEffect(res.fire_au_dice);//音效
 		
 		var chessType = -1;
 		var chessTypes = [0, 1, 3, 5, 9];
