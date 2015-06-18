@@ -33,6 +33,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
@@ -40,6 +41,11 @@ import android.widget.Toast;
 import java.util.Timer;
 import android.view.KeyEvent; 
 
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.analytics.social.UMPlatformData;
+import com.umeng.analytics.social.UMPlatformData.GENDER;
+import com.umeng.analytics.social.UMPlatformData.UMedia;
+//import org.cocos2dx.fireChess.R;
 
 // The name of .so is specified in AndroidMenifest.xml. NativityActivity will load it automatically for you.
 // You can use "System.loadLibrary()" to load other .so files.
@@ -50,6 +56,10 @@ public class AppActivity extends Cocos2dxActivity{
 	private static int backKey = 0;
 	private long exitTime = 0;
     static String hostIPAdress = "0.0.0.0";
+	
+	private static Context mContext;
+	private final  String mPageName = "main";
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
@@ -66,6 +76,17 @@ public class AppActivity extends Cocos2dxActivity{
         hostIPAdress = getHostIpAddress();
 		
 		api = this;
+		
+		//友盟sdk
+		mContext = this;
+		//MobclickAgent.setDebugMode(true);
+//      SDK在统计Fragment时，需要关闭Activity自带的页面统计，
+//		然后在每个页面中重新集成页面统计的代码(包括调用了 onResume 和 onPause 的Activity)。
+		MobclickAgent.openActivityDurationTrack(true);
+		MobclickAgent.setAutoLocation(true);
+		MobclickAgent.setSessionContinueMillis(1000);
+		
+		MobclickAgent.updateOnlineConfig(this);
     }
     
     @Override
@@ -131,7 +152,33 @@ public class AppActivity extends Cocos2dxActivity{
          
     }
 	
+	//友盟sdk
+	@Override
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onPageStart( mPageName );
+		MobclickAgent.onResume(mContext);
+	}
 	
+	@Override
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPageEnd( mPageName );
+		MobclickAgent.onPause(mContext);
+	}
+	
+	/*********
+	友盟sdk
+	自定义计数事件
+	
+	**************/	
+	public static String um_event(String eventId){
+		
+        MobclickAgent.onEvent(mContext,eventId);
+		
+         return eventId;
+		 
+    }
     
     private static native boolean nativeIsLandScape();
     private static native boolean nativeIsDebug();

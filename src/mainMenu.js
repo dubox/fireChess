@@ -48,6 +48,8 @@ var mainMenuLayer = cc.Layer.extend({
 				res.main_btn_huo_sel,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
+					var re = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)V", "fire");
+					cc.log(re);
 					cc.director.runScene(new fireMenuScene());
 				}, this);
 		main_btn_huo.attr({
@@ -60,6 +62,7 @@ var mainMenuLayer = cc.Layer.extend({
 				res.main_btn_shu_sel,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
+					jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)V", "shudu");
 					cc.director.runScene(new shuduMenuScene());
 				}, this);
 		main_btn_shu.attr({
@@ -72,8 +75,9 @@ var mainMenuLayer = cc.Layer.extend({
 				res.main_btn_qita_sel,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
+					jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)V", "qita");//友盟sdk
+					jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "openUrll", "(Ljava/lang/String;)V", "http://m.lianzhong.com");
 					
-					var h = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "openUrll", "(Ljava/lang/String;)V", "http://m.lianzhong.com");
 				}, this);
 		main_btn_qita.attr({
 			x: this.MainNode.width /2,
@@ -338,6 +342,8 @@ var mainMenuLayer = cc.Layer.extend({
 				//cc.log(target.visible)
 				if(target.EXT_getVisible())	//暂时获取父级可见属性   
 					target.onClickTrackNode(cc.rectContainsPoint(cc.rect(0, 0, target.width, target.height), p));
+				
+				return false;
 			},
 		});
 
@@ -398,5 +404,4 @@ HttpGet(version_path+'version.json',function(data){
 	version_ser = data;
 
 });
-
 

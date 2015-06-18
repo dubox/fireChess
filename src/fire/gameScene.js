@@ -227,13 +227,10 @@ var fire_gameLayer = cc.Layer.extend({
 			swallowTouches: true,
 			onTouchBegan: function (touch, event) {
 				cc.director.runScene(new fireMenuScene());
-			},
-			onTouchMoved: function (touch, event) {
-
-			},
-			onTouchEnded: function (touch, event) {
-
+				
+				return true;
 			}
+			
 		}), this);
 		
 		//alert('gameOver');
@@ -767,12 +764,6 @@ var fire_gameLayer = cc.Layer.extend({
 					that.qipanTouchCallback(that.p2grid(p));
 
 				return true;
-			},
-			onTouchMoved: function (touch, event) {
-
-			},
-			onTouchEnded: function (touch, event) {
-
 			}
 		}), this);
 		//this.event_qipanTouch.retain();
@@ -1223,6 +1214,7 @@ var fire_gameScene = cc.Scene.extend({
 		
 	},
 	onExit:function(){
+		this._super();
 		//解决点返回退出时 计时器没有被clear
 		if(fire.runtime.timer)clearInterval(fire.runtime.timer);
 
