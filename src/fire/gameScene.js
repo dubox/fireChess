@@ -116,10 +116,10 @@ var fire_gameLayer = cc.Layer.extend({
 		if(fire.runtime.status == 'gameOver'){
 			return false;
 		}
-
+		
 		fire.runtime.status='roundStart';
 		fire.runtime.playerNow = fire.runtime.playerNow=='a'?'b':'a';
-
+		
 		fire.runtime.chessSel=false;	//当前选中棋子的位置
 		//还原骰子
 		this.getParent().getChildByName('sl').shakeDice('clear');
@@ -137,22 +137,22 @@ var fire_gameLayer = cc.Layer.extend({
 		//this.shakeDice();
 	},
 	roundEnd:function(grid){
-
+		
 		if(fire.runtime.status != 'gameOver')fire.runtime.status='roundEnd';
-
+		
 		var that = this;
-
+		
 		//停止提醒玩家走棋动画
 		//this.getParent().getChildByName('sl').show_p_runAction(fire.runtime.playerNow,false);
-
+		
 		//隐藏可走（绿块）
 		this.forGameData(function(grid){
 			that.qipan.getChildByName(fire.gameData[grid[0]][grid[1]].enSprite).setVisible(false);
 		});
-
+		
 		//隐藏选中效果
 		//this.qipan.getChildByName('source').setVisible(false);
-
+		
 		//显示最后移动的棋子
 		if(grid){
 		this.qipan.getChildByName('target').attr(fire.gameData[grid[0]][grid[1]].xy);
@@ -166,9 +166,9 @@ var fire_gameLayer = cc.Layer.extend({
 		
 			
 		this.roundStart();
-
-
-
+			
+		
+		
 	},
 	gameOver:function(type){
 		
@@ -226,11 +226,14 @@ var fire_gameLayer = cc.Layer.extend({
 			event: cc.EventListener.TOUCH_ONE_BY_ONE,
 			swallowTouches: true,
 			onTouchBegan: function (touch, event) {
-				cc.director.runScene(new fireMenuScene());
-				
-				return true;
+				cc.director.runScene(new mainMenuScene());
+			},
+			onTouchMoved: function (touch, event) {
+
+			},
+			onTouchEnded: function (touch, event) {
+
 			}
-			
 		}), this);
 		
 		//alert('gameOver');
@@ -249,7 +252,7 @@ var fire_gameLayer = cc.Layer.extend({
 	
 	//锁定用户行为 （屏幕交互、按钮。。。）
 	userLock : function(lock){
-
+		
 		if(lock){
 			//注销棋盘监听
 			this.qipanOnTouch(false);
@@ -280,13 +283,13 @@ var fire_gameLayer = cc.Layer.extend({
 	//悔棋
 	backChess:function(){
 		if(fire.runtime.status != 'roundStart')return false;	//只能在回合开始 到 摇骰子之前悔棋
-
+		
 		var lastStep = fire.runtime.log.pop();
 		if(typeof lastStep != 'undefined' ){//cc.log('qq')
-
+			
 			fire.runtime.playerNow = lastStep.user;
 			if(lastStep.type == 'eat'){
-
+			
 				this.moveBack( lastStep.targetGrid,lastStep.sourceGrid, lastStep.targetData);//cc.log('tt')
 				this.score(-lastStep.score);
 			}else if(lastStep.type == 'bingbian'){
@@ -295,19 +298,19 @@ var fire_gameLayer = cc.Layer.extend({
 			}else{
 				this.moveBack( lastStep.targetGrid,lastStep.sourceGrid);
 			}
-
+			
 			if(fire.userData[lastStep.user].isAI){
 				this.backChess();
 			}
-
-
+			
+			
 			//重新标记最后一步走棋路径
 			var ls = fire.runtime.log[fire.runtime.log.length-1];
 			if(typeof ls != 'undefined' ){
 				//重新标记最后一步走棋路径
 				this.qipan.getChildByName('target').attr(fire.gameData[ls.targetGrid[0]][ls.targetGrid[1]].xy);
 				this.qipan.getChildByName('source').attr(fire.gameData[ls.sourceGrid[0]][ls.sourceGrid[1]].xy);
-
+				
 			}else{
 				//隐藏走棋路径
 				this.qipan.getChildByName('target').setVisible(false);
@@ -438,7 +441,7 @@ var fire_gameLayer = cc.Layer.extend({
 		
 		this.qipanSp = this.qipan;
 		
-		this.qipan.addChild(qipanBatchNode, 0);
+		this.qipan.addChild(qipanBatchNode, 0 );
 		this.qipan = qipanBatchNode; 
 	},
 	//判断兵变 并弹出选择框
@@ -627,71 +630,71 @@ var fire_gameLayer = cc.Layer.extend({
 		var that = this;
 		var type = 'move';
 		var score = 0;
-
-
-		if(fire.gameData[gridTar[0]][gridTar[1]].chess){
-			type = 'eat';
-			//目标位置有棋 则为 吃
-			this.qipan.getChildByName(fire.gameData[gridTar[0]][gridTar[1]].chess).setVisible(false);
-
-			this.score(fire.gameData[gridTar[0]][gridTar[1]].type);
-			score = fire.gameData[gridTar[0]][gridTar[1]].type;
-
-		}
-
+		
+		
+			if(fire.gameData[gridTar[0]][gridTar[1]].chess){
+				type = 'eat';
+					//目标位置有棋 则为 吃
+				this.qipan.getChildByName(fire.gameData[gridTar[0]][gridTar[1]].chess).setVisible(false);
+				
+				this.score(fire.gameData[gridTar[0]][gridTar[1]].type);
+				score = fire.gameData[gridTar[0]][gridTar[1]].type;
+				
+			}
+		
 		//移动棋子
-		this.userLock(true);
+			this.userLock(true);
 		this.qipan.getChildByName(fire.gameData[gridNow[0]][gridNow[1]].chess).runAction(
 				cc.sequence(
 						cc.moveTo(0.3, fire.gameData[gridTar[0]][gridTar[1]]['xy']),
 						cc.callFunc(function () {
 							//that.userLock(false);
-
+							
 							//判断兵变  如果兵变则在兵变后结束回合
 
 							if(!that.bingbian(gridTar)){
 								that.roundEnd(gridTar);
 							}
-
+							
 						}, this)
 				)
 		);
-
+		
 		//走棋和吃子log
 		var tarData = JSON.stringify(fire.gameData[gridTar[0]][gridTar[1]]);
 		this.runTimeLog(type, fire.runtime.playerNow,score, gridNow, gridTar, fire.gameData[gridNow[0]][gridNow[1]], JSON.parse(tarData));
-
+		
 		if(fire.gameData[gridTar[0]][gridTar[1]].type == 0){	//如果被吃的是王 则game over
 			this.gameOver('wang');
 		}
-
+		
 		//移动数据
 		fire.gameData[gridTar[0]][gridTar[1]].chess = fire.gameData[gridNow[0]][gridNow[1]].chess;
 		fire.gameData[gridTar[0]][gridTar[1]].type = fire.gameData[gridNow[0]][gridNow[1]].type;
 		fire.gameData[gridTar[0]][gridTar[1]].color = fire.gameData[gridNow[0]][gridNow[1]].color;
 		fire.gameData[gridTar[0]][gridTar[1]].name = fire.gameData[gridNow[0]][gridNow[1]].name;
-
+		
 		fire.gameData[gridNow[0]][gridNow[1]].chess = null;
 		fire.gameData[gridNow[0]][gridNow[1]].type = -1;
 		fire.gameData[gridNow[0]][gridNow[1]].color = null;
 		fire.gameData[gridNow[0]][gridNow[1]].name = null;
-
-
-
-
-
+		
+		
+		
+			
+		
 	},
-
+	
 	moveBack:function(from,backTo,backData){
 
 		var that = this;
 		if(from[0] == backTo[0] && from[1] == backTo[1] && backData){
 			//删除兵变后的棋子
-
+			
 			this.qipan.getChildByName(fire.gameData[from[0]][from[1]].chess).removeFromParent(true);
-
+			
 		}else{
-
+		
 			//移动棋子
 			this.userLock(true);
 			this.qipan.getChildByName(fire.gameData[from[0]][from[1]].chess).runAction(
@@ -702,13 +705,13 @@ var fire_gameLayer = cc.Layer.extend({
 							}, this)
 					)
 			);
-
+			
 			//移动数据
 			fire.gameData[backTo[0]][backTo[1]].chess = fire.gameData[from[0]][from[1]].chess;
 			fire.gameData[backTo[0]][backTo[1]].type = fire.gameData[from[0]][from[1]].type;
 			fire.gameData[backTo[0]][backTo[1]].color = fire.gameData[from[0]][from[1]].color;
 			fire.gameData[backTo[0]][backTo[1]].name = fire.gameData[from[0]][from[1]].name;
-
+	
 			fire.gameData[from[0]][from[1]].chess = null;
 			fire.gameData[from[0]][from[1]].type = -1;
 			fire.gameData[from[0]][from[1]].color = null;
@@ -720,9 +723,8 @@ var fire_gameLayer = cc.Layer.extend({
 			fire.gameData[from[0]][from[1]] = backData;
 		}
 
-
+		
 	},
-
 	
 	//格子转坐标 return cc.p
 	grid2p:function(grid){
@@ -742,7 +744,7 @@ var fire_gameLayer = cc.Layer.extend({
 	},
 	//棋盘点击监听 callback(grid)
 	qipanOnTouch:function(type){
-
+		
 		if(type === false){
 			this.event_qipanTouch.setEnabled(false);
 			return false;
@@ -751,9 +753,9 @@ var fire_gameLayer = cc.Layer.extend({
 			this.event_qipanTouch.setEnabled(true);
 			return false;
 		}
-
+		
 		var that = this;
-
+		
 		this.event_qipanTouch = cc.eventManager.addListener(cc.EventListener.create({
 			event: cc.EventListener.TOUCH_ONE_BY_ONE,
 			swallowTouches: true,
@@ -761,13 +763,19 @@ var fire_gameLayer = cc.Layer.extend({
 				//var target = event.getCurrentTarget();
 				var p = that.qipan.convertToNodeSpace(touch.getLocation());//cc.log(p);
 				if(that.qipanSp.EXT_PinNode(p))
-					that.qipanTouchCallback(that.p2grid(p));
-
+				that.qipanTouchCallback(that.p2grid(p));
+				
 				return true;
+			},
+			onTouchMoved: function (touch, event) {
+
+			},
+			onTouchEnded: function (touch, event) {
+
 			}
 		}), this);
 		//this.event_qipanTouch.retain();
-
+		
 	},
 	showAlertX : function(text,cb1,cb2){
 		
@@ -786,7 +794,7 @@ var fire_gameLayer = cc.Layer.extend({
 		
 		if(fire.runtime.status != 'diced'){
 			cc.audioEngine.playEffect(res.fire_au_error1);
-			this.showAlertX('请先掷骰子，后走棋！');
+			this.showAlertX('Please shake the elbows before moving.');
 			return false;
 		}
 		
@@ -796,7 +804,7 @@ var fire_gameLayer = cc.Layer.extend({
 					that.selChess(grid);
 				}else{
 					cc.audioEngine.playEffect(res.fire_au_error1);
-					that.showAlertX('请走选中的棋子！');
+					that.showAlertX('Please move the choosing piece.');
 					return false;
 				}
 			}
@@ -813,7 +821,7 @@ var fire_gameLayer = cc.Layer.extend({
 						that.moveChess(fire.runtime.chessSel, grid);
 					}else{
 						cc.audioEngine.playEffect(res.fire_au_error1);
-						that.showAlertX('走棋规则不正确！');
+						that.showAlertX('You are breaking the rule!');
 					}
 				}
 
@@ -823,7 +831,7 @@ var fire_gameLayer = cc.Layer.extend({
 					that.moveChess(fire.runtime.chessSel, grid);
 				}else{
 					cc.audioEngine.playEffect(res.fire_au_error1);
-					that.showAlertX('走棋规则不正确！');
+					that.showAlertX('You are breaking the rule!');
 				}
 			}
 		}
@@ -1214,10 +1222,9 @@ var fire_gameScene = cc.Scene.extend({
 		
 	},
 	onExit:function(){
-		this._super();
 		//解决点返回退出时 计时器没有被clear
 		if(fire.runtime.timer)clearInterval(fire.runtime.timer);
-
+		
 		//移除精灵表  解决换皮肤后第二次进入场景棋子混乱问题
 		cc.spriteFrameCache.removeSpriteFramesFromFile(fire.gameConfig['skin'+fire.runtime.skin].chess_plist);
 	}

@@ -13,13 +13,13 @@
  */
 
 cc.Node.prototype.EXT_getVisible = function(){
-
+	
 	//cc.log(this);
 	var NodeArr = [this]; var i = 0;
 	while(NodeArr.length > i){
-
+		
 		if(NodeArr[i].getParent())	
-			NodeArr.push(NodeArr[i].getParent());
+		NodeArr.push(NodeArr[i].getParent());
 
 		if(!NodeArr[i].isVisible()){
 			return false;
@@ -39,7 +39,7 @@ cc.Node.prototype.EXT_getVisible = function(){
 cc.Node.prototype.EXT_PinNode = function(p){
 
 	return cc.rectContainsPoint(cc.rect(0, 0, this.getContentSize().width, this.getContentSize().height), p);
-
+	
 };
 
 /****
@@ -60,7 +60,7 @@ cc.Node.prototype.EXT_EventListener = function( opt ){
 			//cc.log(target.visible)
 			if(target.EXT_getVisible())	//可见且为当前  
 				opt.onTouchBegan(cc.rectContainsPoint(cc.rect(0, 0, target.width, target.height), p));
-
+			
 			return true;
 		},
 	});

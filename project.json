@@ -20,7 +20,10 @@
         "src/fire/fireButton.js",
         "src/fire/gameScene.js",
         "src/shudu/config.js",
+        "src/shudu/Qt6_data.js",
+        "src/shudu/FLMdecode.js",
         "src/shudu/MenuScene.js",
-        "src/shudu/GameScene.js"
+        "src/shudu/GameScene.js",
+        "src/shudu/GameScene2.js"
     ]
 }

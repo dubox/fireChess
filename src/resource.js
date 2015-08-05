@@ -20,14 +20,14 @@ var res = {
 		fire_guize_sel : "res/fire/buttons/guize_sel.png",
 		fire_back2list : "res/fire/buttons/back2list.png",
 		fire_back2list_sel : "res/fire/buttons/back2list_sel.png",
+		fire_cancel : "res/fire/buttons/cancel.png",
+		fire_cancel_sel : "res/fire/buttons/cancel_sel.png",
 		fire_chonglai : "res/fire/buttons/chonglai.png",
 		fire_chonglai_sel : "res/fire/buttons/chonglai_sel.png",
 		fire_huiqi : "res/fire/buttons/huiqi.png",
 		fire_huiqi_sel : "res/fire/buttons/huiqi_sel.png",
 		fire_ok : "res/fire/buttons/ok.png",
 		fire_ok_sel : "res/fire/buttons/ok_sel.png",
-		fire_cancel : "res/fire/buttons/cancel.png",
-		fire_cancel_sel : "res/fire/buttons/cancel_sel.png",
 		fire_pifu : "res/fire/buttons/pifu.png",
 		fire_pifu_sel : "res/fire/buttons/pifu_sel.png",
 		fire_jiaohuan : "res/fire/buttons/jiaohuan.png",
@@ -92,12 +92,8 @@ var res = {
 		fire_au_move : "res/fire/au/move.mp3",	//走棋
 		fire_au_moveerr : "res/fire/au/moveerr.mp3",
 		
-		
+		/*
 		//数独
-		sd_ok : "res/fire/buttons/ok.png",
-		sd_ok_sel : "res/fire/buttons/ok_sel.png",
-		sd_cancel : "res/fire/buttons/cancel.png",
-		sd_cancel_sel : "res/fire/buttons/cancel_sel.png",
 		sd_HelloWorld_png : "res/shudu/HelloWorld.jpg",
 		sd_qt_sel : 		"res/shudu/qt_sel.png",
 		sd_qt_dissel : 		"res/shudu/qt_dissel.png",
@@ -126,7 +122,6 @@ var res = {
 		sd_continues : 		"res/shudu/continues.png",
 		sd_btnOpen : 		"res/shudu/open.png",
 		sd_btnOpen_sel : 		"res/shudu/opens.png",
-		sd_btnOpen_dis : 		"res/shudu/opend.png",
 		sd_jiesuan : 		"res/shudu/jiesuan.png",
 		sd_topList : 		"res/shudu/top-list.png",
 		sd_topLists : 		"res/shudu/top-lists.png",
@@ -167,6 +162,8 @@ var res = {
 		sd_btn_2_4s : 		"res/shudu/btn_2_4s.png",
         
 		sd_q4 : "res/shudu/q4.png"
+		
+		*/
 };
 
 var g_resources = [];

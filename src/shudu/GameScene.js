@@ -123,18 +123,13 @@ var shuduGameMainLayer = cc.Layer.extend({
             y: size.height -80
         });
         */
-        
-        //跳关
+
         var rightBtn = new cc.MenuItemImage(
             res.sd_right_png,
             res.sd_right_sel_png,
             function (btn) {
             	that.btnPubCallBack(btn);
-            	that.showAlertX('放弃当前局，\n切换至新一局？',
-            			function(){that.chageGuan(1);}	
-            			//function(){}		
-            	);
-                
+                that.chageGuan(1);
             }, this);
         rightBtn.attr({
         	x: size.width - 70,
@@ -192,7 +187,6 @@ var shuduGameMainLayer = cc.Layer.extend({
             this.btnOpen = new cc.MenuItemImage(
                 res.sd_btnOpen,
                 res.sd_btnOpen_sel,
-                res.sd_btnOpen_dis,
                 function (btn) {
                 	that.btnPubCallBack(btn);
                     //4x4 翻开棋子
@@ -206,17 +200,11 @@ var shuduGameMainLayer = cc.Layer.extend({
                         shudu.gameData_sel = false; //当前选中的格子
                         shudu.selBtn_sel = false; //当前选中的棋子按钮
                     }
-                    
-                    if(shudu.Q4Opened <= 0){
-                    	that.btnOpen.setEnabled(false);
-                    }
                 },
                 this);
             
             this.btnOpen.attr({x:this.MainNode.width / 4,y:80,scale : shudu.UI.scale,});
-            
             bottomBtn.addChild(this.btnOpen, 0);
-            
             
             //4阶 重玩按钮在中间
             this.replayBtn2.attr({x:this.MainNode.width / 2,y:80});
@@ -246,11 +234,11 @@ var shuduGameMainLayer = cc.Layer.extend({
         this.MainNode.addChild(alertX, 2);
         this.alertX = alertX;
 
-        var alertxTxt = new cc.LabelTTF('',  '黑体', 30, cc.size(alertX.width-20,100), cc.TEXT_ALIGNMENT_CENTER);
+        var alertxTxt = new cc.LabelTTF('',  '黑体', 30, cc.size(alertX.width-20,50), cc.TEXT_ALIGNMENT_CENTER);
         alertxTxt.setFontFillColor(cc.color('#ffffff'));
         alertxTxt.attr({
         	x: alertX.width /2,
-        	y: 135,
+        	y: 140,
         });
         this.alertX.addChild(alertxTxt, 0);
         this.alertxTxt = alertxTxt;
@@ -281,48 +269,16 @@ var shuduGameMainLayer = cc.Layer.extend({
         		}, this);
         continues.attr({
         	x: this.alertX.width *3/4, 
-        	y: 65,
+        	y: 70,
         	scale:shudu.UI.scale
         });
-        
-        var btn_ok = new cc.MenuItemImage(
-        		res.sd_ok,
-        		res.sd_ok_sel,
-        		function (btn) {
-        			that.btnPubCallBack(btn);
-        			//cc.log(btn)
-        			if(typeof btn.cb == 'function')btn.cb();
-        			//that.replay();
-        			alertX.setVisible(false);
-        		}, this);
-        btn_ok.attr({
-        	x: this.alertX.width/4, 
-        	y: 70,
-        	//scale:shudu.UI.scale
-        });
-        var btn_cancel = new cc.MenuItemImage(
-        		res.sd_cancel,
-        		res.sd_cancel_sel,
-        		function (btn) {
-        			that.btnPubCallBack(btn);
-        			//cc.log(btn)
-        			if(typeof btn.cb == 'function')btn.cb();
-        			alertX.setVisible(false);
-        		}, this);
-        btn_cancel.attr({
-        	x: this.alertX.width *3/4, 
-        	y: 70,
-        	//scale:shudu.UI.scale
-        });
 
-        var menu = new cc.Menu(replay,continues,btn_ok,btn_cancel);
+        var menu = new cc.Menu(replay,continues);
         menu.x = 0;
         menu.y = 0;
         this.alertX.addChild(menu, 0);
         this.replayBtn = replay;
         this.continuesBtn = continues;
-        this.btn_ok = btn_ok;
-        this.btn_cancel = btn_cancel;
         //弹窗end
         
         
@@ -398,54 +354,19 @@ var shuduGameMainLayer = cc.Layer.extend({
         var userNameField = new cc.TextFieldTTF("", cc.size(410,90), cc.TEXT_ALIGNMENT_LEFT,"Arial", 72);
         userNameField.setPlaceHolder('Player1');
         userNameField.attr({
-        	x: 635,
+        	x: 630,
         	y: 260,
         });
-        //this.userNameField = userNameField;
-        jiesuan.addChild(userNameField,0, 'userName');
-        
-        /*
-        jiesuan.onTextFieldAttachWithIME = function(sender){
-
-        	userNameField.runAction(cc.repeatForever(cc.sequence(
-        			cc.fadeOut(0.4),
-        			cc.fadeIn(0.4)
-        	)));
-        	return false;
-        }
-        jiesuan.onTextFieldDetachWithIME = function(sender){
-
-        	userNameField.stopAllActions();
-        	userNameField.setOpacity(255);
-        	return false;
-        }
-        jiesuan.onTextFieldInsertText = function(sender){
-        	
-        	return false;
-        }
-        jiesuan.onTextFieldDeleteBackward = function(sender){
-        	
-        	return false;
-        }
-        
-        this.userNameField.setDelegate(jiesuan);	//jsb 不支持
-        
-        */
-        
         userNameField.onClickTrackNode = function (clicked) {
         	//var textField = this._trackNode;
         	if (clicked) {
 
         		userNameField.attachWithIME();
-        		
         	} else {
 
         		userNameField.detachWithIME();
-        		userNameField.stopAllActions();
         	}
         }
-        
-        
         //监听输入框点击事件
         var userNameFieldListener = cc.EventListener.create({
         	event: cc.EventListener.TOUCH_ONE_BY_ONE,
@@ -456,8 +377,6 @@ var shuduGameMainLayer = cc.Layer.extend({
         		//cc.log(target.visible)
         		if(target.getParent().visible)	//暂时获取父级可见属性   
         		target.onClickTrackNode(cc.rectContainsPoint(cc.rect(0, 0, target.width, target.height), p));
-        		
-        		return false;
         	},
         });
 
@@ -465,7 +384,7 @@ var shuduGameMainLayer = cc.Layer.extend({
         
         
         //userNameField.attachWithIME();
-        
+        jiesuan.addChild(userNameField,0, 'userName');
         this.MainNode.addChild(jiesuan, 2);
         this.jiesuan = jiesuan;
         //**************结算面板end
@@ -536,8 +455,6 @@ var shuduGameMainLayer = cc.Layer.extend({
         
         return true;
     },
-    
-    
     
     //按钮公共函数
     btnPubCallBack:function(btn){
@@ -804,7 +721,6 @@ var shuduGameMainLayer = cc.Layer.extend({
         	//剩余翻开次数
         	shudu.Q4Opened = 6;
         	this.openNum.setString(shudu.Q4Opened);
-        	this.btnOpen.setEnabled(true);
         	
         	this.Qt = this.Qt4X4(QtId ? QtId : 0);  //随机题
 
@@ -964,7 +880,7 @@ var shuduGameMainLayer = cc.Layer.extend({
         				//return false;
         			}
         		}
-        		return true;
+        		//return true;
         	},
         });
         
@@ -973,24 +889,8 @@ var shuduGameMainLayer = cc.Layer.extend({
     
     showAlertX:function(text,cb1,cb2){
     	this.alertxTxt.setString(text);
-    	
-    	if(cb1){
-    		this.replayBtn.setVisible(false);
-    		this.continuesBtn.setVisible(false);
-    		this.btn_ok.setVisible(true);
-    		this.btn_cancel.setVisible(true);
-    		
-    		this.btn_ok.cb = cb1 ? cb1:0;
-    		this.btn_cancel.cb = cb2 ? cb2:0;
-    	}else{
-    		
-    		this.btn_ok.setVisible(false);
-    		this.btn_cancel.setVisible(false);
-    		this.replayBtn.setVisible(true);
-    		this.continuesBtn.setVisible(true);
-    	}
-    	
-    	
+    	this.replayBtn.cb = cb1 ? cb1:0;
+    	this.continuesBtn.cb = cb2 ? cb2:0;
     	this.alertX.setVisible(true);
     },
     
@@ -1153,7 +1053,7 @@ var shuduGameScene = cc.Scene.extend({
         this.addChild(layer);
     },
     onExit:function(){
-    	this._super();
+
     	if(shudu.gameTimerId)clearInterval(shudu.gameTimerId);	//释放计时器
     }
 });

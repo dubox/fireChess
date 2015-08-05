@@ -654,7 +654,7 @@ var fire_showLayer = cc.Layer.extend({
 		
 		if(isWin > 0 || isWin < 0){
 			
-			var Txt = new cc.LabelTTF('获胜方：',  '黑体', 40, cc.size(200,66), cc.TEXT_ALIGNMENT_CENTER);
+			var Txt = new cc.LabelTTF('Winner：',  '黑体', 40, cc.size(200,66), cc.TEXT_ALIGNMENT_CENTER);
 			Txt.setFontFillColor(cc.color('#ffffff'));
 			Txt.attr({
 				x: 200,

@@ -48,9 +48,10 @@ var mainMenuLayer = cc.Layer.extend({
 				res.main_btn_huo_sel,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
-					var re = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)V", "fire");
-					cc.log(re);
-					cc.director.runScene(new fireMenuScene());
+					//cc.director.runScene(new fireMenuScene());
+					
+					fire_gameType_rj = false;
+					cc.director.runScene(new fire_gameScene());
 				}, this);
 		main_btn_huo.attr({
 			x: this.MainNode.width /2,
@@ -62,8 +63,9 @@ var mainMenuLayer = cc.Layer.extend({
 				res.main_btn_shu_sel,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
-					jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)V", "shudu");
-					cc.director.runScene(new shuduMenuScene());
+					//cc.director.runScene(new shuduMenuScene());
+					fire_gameType_rj = true;
+					cc.director.runScene(new fire_gameScene());
 				}, this);
 		main_btn_shu.attr({
 			x: this.MainNode.width /2,
@@ -75,9 +77,10 @@ var mainMenuLayer = cc.Layer.extend({
 				res.main_btn_qita_sel,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
-					jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)V", "qita");//友盟sdk
-					jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "openUrll", "(Ljava/lang/String;)V", "http://m.lianzhong.com");
-					
+					if(cc.sys.isNative){
+						jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)Ljava/lang/String;", "qita");//友盟sdk
+						jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "openUrll", "(Ljava/lang/String;)V", "http://m.lianzhong.com");
+					}
 				}, this);
 		main_btn_qita.attr({
 			x: this.MainNode.width /2,
@@ -217,7 +220,7 @@ var mainMenuLayer = cc.Layer.extend({
 			
 			//弹窗
 			this.showAlert(txth+ 100, function(alertBg){
-				var alertxTxt = new cc.LabelTTF('发现新版本：'+version_ser.ver+'\n'+version_ser.des,  '黑体', 25, cc.size(alertX.width-20,txth), cc.TEXT_ALIGNMENT_CENTER);
+				var alertxTxt = new cc.LabelTTF('New version：'+version_ser.ver+'\n'+version_ser.des,  '黑体', 25, cc.size(alertX.width-20,txth), cc.TEXT_ALIGNMENT_CENTER);
 				alertxTxt.setFontFillColor(cc.color('#ffffff'));
 				alertxTxt.attr({
 					x: alertBg.width /2,
@@ -229,6 +232,7 @@ var mainMenuLayer = cc.Layer.extend({
 						res.fire_ok,
 						res.fire_ok_sel,
 						function (btn) {
+							if(cc.sys.isNative)
 							jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "openUrll", "(Ljava/lang/String;)V", version_path+version_ser.apk);
 							
 							alertBg.removeFromParent(true);
@@ -342,8 +346,6 @@ var mainMenuLayer = cc.Layer.extend({
 				//cc.log(target.visible)
 				if(target.EXT_getVisible())	//暂时获取父级可见属性   
 					target.onClickTrackNode(cc.rectContainsPoint(cc.rect(0, 0, target.width, target.height), p));
-				
-				return false;
 			},
 		});
 
@@ -404,4 +406,5 @@ HttpGet(version_path+'version.json',function(data){
 	version_ser = data;
 
 });
+
 
