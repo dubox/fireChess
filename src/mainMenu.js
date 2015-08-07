@@ -48,10 +48,11 @@ var mainMenuLayer = cc.Layer.extend({
 				res.main_btn_huo_sel,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
-					//cc.director.runScene(new fireMenuScene());
 					
-					fire_gameType_rj = false;
-					cc.director.runScene(new fire_gameScene());
+					//第三个参数为 方法签名  (参数类型)返回值类型
+					jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)Ljava/lang/String;", "fire");
+					
+					cc.director.runScene(new fireMenuScene());
 				}, this);
 		main_btn_huo.attr({
 			x: this.MainNode.width /2,
@@ -63,13 +64,24 @@ var mainMenuLayer = cc.Layer.extend({
 				res.main_btn_shu_sel,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
-					//cc.director.runScene(new shuduMenuScene());
-					fire_gameType_rj = true;
-					cc.director.runScene(new fire_gameScene());
+					jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)Ljava/lang/String;", "shudu");
+					cc.director.runScene(new shuduMenuScene());
 				}, this);
 		main_btn_shu.attr({
-			x: this.MainNode.width /2,
-			y: 300,
+			scale:0.5
+		});
+		
+		var main_btn_shuSTD = new cc.MenuItemImage(
+				res.main_btn_shuSTD,
+				res.main_btn_shuSTD_sel,
+				function (btn) {
+					btn.getParent().pubCallBack(btn);
+					jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)Ljava/lang/String;", "shuduSTD");
+					cc.director.runScene(new shuduGameScene2());
+				}, this);
+		main_btn_shuSTD.attr({
+			
+			scale:0.5
 		});
 		
 		var main_btn_qita = new cc.MenuItemImage(
@@ -77,10 +89,10 @@ var mainMenuLayer = cc.Layer.extend({
 				res.main_btn_qita_sel,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
-					if(cc.sys.isNative){
-						jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)Ljava/lang/String;", "qita");//友盟sdk
-						jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "openUrll", "(Ljava/lang/String;)V", "http://m.lianzhong.com");
-					}
+					jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)Ljava/lang/String;", "qita");//友盟sdk
+					
+					jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "openUrll", "(Ljava/lang/String;)V", "http://m.lianzhong.com");
+					
 				}, this);
 		main_btn_qita.attr({
 			x: this.MainNode.width /2,
@@ -121,9 +133,10 @@ var mainMenuLayer = cc.Layer.extend({
 		if(child_lock.type){main_btn_lock.selected()}
 		
 
-		var menu = new cc.Menu(main_btn_huo,main_btn_shu,main_btn_qita);//,main_btn_lock
-		menu.x = 0;
-		menu.y = 0;
+		var menu = new cc.Menu(main_btn_huo,main_btn_shu,main_btn_shuSTD,main_btn_qita);//,main_btn_lock
+		menu.x = this.MainNode.width/2;
+		menu.y = this.MainNode.height/3 - 20;
+		menu.alignItemsVertically();
 		this.MainNode.addChild(menu, 0);
 		
 		menu.pubCallBack = function(btn){
@@ -220,7 +233,7 @@ var mainMenuLayer = cc.Layer.extend({
 			
 			//弹窗
 			this.showAlert(txth+ 100, function(alertBg){
-				var alertxTxt = new cc.LabelTTF('New version：'+version_ser.ver+'\n'+version_ser.des,  '黑体', 25, cc.size(alertX.width-20,txth), cc.TEXT_ALIGNMENT_CENTER);
+				var alertxTxt = new cc.LabelTTF('发现新版本：'+version_ser.ver+'\n'+version_ser.des,  '黑体', 25, cc.size(alertX.width-20,txth), cc.TEXT_ALIGNMENT_CENTER);
 				alertxTxt.setFontFillColor(cc.color('#ffffff'));
 				alertxTxt.attr({
 					x: alertBg.width /2,
@@ -232,7 +245,6 @@ var mainMenuLayer = cc.Layer.extend({
 						res.fire_ok,
 						res.fire_ok_sel,
 						function (btn) {
-							if(cc.sys.isNative)
 							jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "openUrll", "(Ljava/lang/String;)V", version_path+version_ser.apk);
 							
 							alertBg.removeFromParent(true);
@@ -346,6 +358,8 @@ var mainMenuLayer = cc.Layer.extend({
 				//cc.log(target.visible)
 				if(target.EXT_getVisible())	//暂时获取父级可见属性   
 					target.onClickTrackNode(cc.rectContainsPoint(cc.rect(0, 0, target.width, target.height), p));
+				
+				return false;
 			},
 		});
 
@@ -353,11 +367,13 @@ var mainMenuLayer = cc.Layer.extend({
 	}
 });
 
+var mainMenuLayerObj = 0;
+
 var mainMenuScene = cc.Scene.extend({
 	onEnter:function () {
 		this._super();
-		var layer = new mainMenuLayer();
-		this.addChild(layer);
+		mainMenuLayerObj = new mainMenuLayer();
+		this.addChild(mainMenuLayerObj);
 		
 		//var customClass = cc.CustomClass.create();
 		//var msg = customClass.helloMsg();
@@ -407,4 +423,9 @@ HttpGet(version_path+'version.json',function(data){
 
 });
 
+function QRcallback1(str){
 
+	cc.log('QR:'+ str);
+
+	mainMenuLayerObj.showAlertX(str,function(){},function(){});
+}

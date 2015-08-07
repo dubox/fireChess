@@ -33,7 +33,7 @@ var fire_menuLayer = cc.Layer.extend({
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
 					
-					cc.director.runScene(new mainMenuScene());
+					cc.director.runScene(new fireMenuScene());
 				}, this);
 		fire_back.attr({
 			x: 60, 
@@ -75,7 +75,7 @@ var fire_menuLayer = cc.Layer.extend({
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
 					
-					that.getParent().getChildByName('gl').showAlertX('Sure to again?',function(){
+					that.getParent().getChildByName('gl').showAlertX('您确定重置游戏吗？',function(){
 						that.getParent().getChildByName('gl').newGame();
 					});
 					
@@ -94,7 +94,7 @@ var fire_menuLayer = cc.Layer.extend({
 					btn.getParent().pubCallBack(btn);
 					
 					
-					that.getParent().getChildByName('gl').showAlertX('Sure to change and\n restart?',function(){
+					that.getParent().getChildByName('gl').showAlertX('您确定重置游戏并交换\n走棋顺序吗？',function(){
 						
 						//var tmp = fire.userData.a;
 						//fire.userData.a = fire.userData.b;

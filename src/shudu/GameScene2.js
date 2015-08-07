@@ -378,7 +378,7 @@ var shuduSTDLayer = cc.Layer.extend({
         
         
         //*********************结算面板
-        var jiesuan = new cc.Sprite(res.sd_jiesuan);
+        var jiesuan = new cc.Sprite(res.sd_jiesuan2);
         jiesuan.attr({
         	x: this.MainNode.width / 2,
         	y: this.MainNode.height / 2,
@@ -816,6 +816,22 @@ var shuduSTDLayer = cc.Layer.extend({
      */
     newGame:function(type,QtId,str){
 
+    	
+    	if(type == 6){
+    		
+    		
+    		this.Qt = this.Qt6X6(QtId ? QtId : 0 , str);  //随机题
+    		
+    		if(!this.Qt) return false;
+    		
+    		//剩余翻开次数
+    		shudu.QOpened = 0;
+    		this.openNum.setString(shudu.QOpened);
+    		this.btnOpen.setEnabled(true);
+
+
+    	}
+    	
     	this.initGameData();
     	this.qipanSprite.removeAllChildren(true);
 
@@ -833,16 +849,7 @@ var shuduSTDLayer = cc.Layer.extend({
         shudu.gameData_sel = false; //当前选中的格子
         shudu.selBtn_sel = false; //当前选中的棋子按钮
         
-        if(type == 6){
-
-        	//剩余翻开次数
-        	shudu.QOpened = 0;
-        	this.openNum.setString(shudu.QOpened);
-        	this.btnOpen.setEnabled(true);
-        	
-        	this.Qt = this.Qt6X6(QtId ? QtId : 0 , str);  //随机题
-        	
-        }
+        
         
         //显示题面
         for(var i = 0; i<this.Qt[2].length; i++){
@@ -1219,10 +1226,16 @@ cc.eventManager.addCustomListener('afterQRscan', function(event){
 function listenQRstr(){//cc.log("listenQRstr");
 	shudu.listenQRstr = setInterval(function(){
 		//cc.log("fff"); 
-		if(shudu.QRstatus == 2){
+			//获取扫描结果
+		var javaQRstr = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getQRstr", "()Ljava/lang/String;");
+			//结果的第一个字符为状态
+		shudu.QRstatus = javaQRstr.substr(0,1);
+		
+		if(shudu.QRstatus == '2'){
 			//cc.eventManager.dispatchCustomEvent("afterQRscan", {QRstr:shudu.QRstr});
 			
 			clearListenQRstr();
+			shudu.QRstr = javaQRstr.substr(1);
 			shudu.QRstatus = 0;
 			//shudu.runtime.QRstr = shudu.QRstr;
 			shuduSTDLayerObj.newGame(shudu.gameType, 0, shudu.QRstr);
@@ -1230,6 +1243,9 @@ function listenQRstr(){//cc.log("listenQRstr");
 		
 	},1000);
 }
+
+
+
 
 function clearListenQRstr(){//cc.log("clearListenQRstr");
 if(typeof shudu.listenQRstr != 'undefined')
@@ -1249,11 +1265,12 @@ function QRscan(){
  * 二维码扫描回调
  * @param str 扫描结果
  * 
+ * 已弃用
  */
 
 function QRcallback(str){
 	//cc.log('#'+str)
-
+	////现在这里只有两个赋值 Cocos2dxJavascriptJavaBridge.evalString可以调用10次第11次闪退。之前这里做的事情比较多第二次就闪退
 	shudu.QRstr = str;
 	shudu.QRstatus = 2;
 	//return true;

@@ -28,6 +28,7 @@ package org.cocos2dx.javascript;
 
 import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
+import org.cocos2dx.lib.Cocos2dxJavascriptJavaBridge;
 import android.content.pm.ActivityInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -45,7 +46,10 @@ import com.umeng.analytics.MobclickAgent;
 import com.umeng.analytics.social.UMPlatformData;
 import com.umeng.analytics.social.UMPlatformData.GENDER;
 import com.umeng.analytics.social.UMPlatformData.UMedia;
-//import org.cocos2dx.fireChess.R;
+
+//import com.google.zxing.*;
+import org.Zxing.QR.CaptureActivity;
+import org.cocos2dx.fireChess.R;
 
 // The name of .so is specified in AndroidMenifest.xml. NativityActivity will load it automatically for you.
 // You can use "System.loadLibrary()" to load other .so files.
@@ -59,6 +63,9 @@ public class AppActivity extends Cocos2dxActivity{
 	
 	private static Context mContext;
 	private final  String mPageName = "main";
+	
+	private static String QRstr = "";	//二维码扫描结果
+	private static int QRstatus = 0;	//二维码状态 2: 表示有新结果
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,6 +185,62 @@ public class AppActivity extends Cocos2dxActivity{
 		
          return eventId;
 		 
+    }
+	
+	
+	
+	/*********
+	扫描二维码
+	
+	**************/	
+	public static void decodeQR() {
+        // TODO Auto-generated method stub
+		//ui相关的操作需要在ui线程中运行
+		
+		api.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent it = new Intent(api, CaptureActivity.class);
+				 api.startActivityForResult(it , 1200);
+			}
+        });
+		
+         
+    }
+	
+	
+	/**
+     * 所有的Activity对象的返回值都是由这个方法来接收
+     * requestCode:    表示的是启动一个Activity时传过去的requestCode值
+     * resultCode：表示的是启动后的Activity回传值时的resultCode值
+     * data：表示的是启动后的Activity回传过来的Intent对象
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        //super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1200 && resultCode == 1200)	//二维码扫描扫描回传
+        {
+            //
+        	QRstr = data.getStringExtra("result");
+			QRstatus = 2;
+			//回传数据到js
+        	//Cocos2dxJavascriptJavaBridge.evalString("QRcallback(\""+QRstr+"\");");
+        	//Cocos2dxJavascriptJavaBridge.evalString("cc.director.runScene(new shuduMenuScene())");
+			
+			//openUrll("http://baidu.com/"+result_value);
+        }
+    }
+	
+	
+	//js端通过此函数获取二维码扫描结果
+	public static String getQRstr(){
+        if(QRstatus == 2){
+			QRstatus = 0;
+			return "2"+QRstr;
+		}else{
+			return "0";
+		}
     }
     
     private static native boolean nativeIsLandScape();

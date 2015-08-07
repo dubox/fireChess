@@ -6,20 +6,31 @@ var shuduGameMainLayer = cc.Layer.extend({
         // 1. super init first
         this._super();
         //this.Sense = Sense;
+        
+        
+        //this.getParent().call(this);
+        //this.test(this.tt);
+        
         var that = this;
         var size = cc.winSize;
         //alert('C_selMenu='+C_selMenu+' C_selSelect='+C_selSelect);
+        
         //判断游戏规格 和 棋子ui
         if(shudu.C_selMenu == 0){
         	shudu.gameType = 3;
         }else if(shudu.C_selMenu == 1){
         	shudu.gameType = 4;
+        }else if(shudu.C_selMenu == 2){
+        	shudu.gameType = 6;
+        	chessUI = 3;
         }
         if(shudu.C_selSelect == 0){
             chessUI = 1;
+            if(shudu.gameType == 6 )chessUI = 3;
         }else if(shudu.C_selSelect == 1){
             chessUI = 2;
         }
+        
 
         // 背景图
         var Bg = new cc.Sprite(res.sd_HelloWorld_png);
@@ -123,13 +134,18 @@ var shuduGameMainLayer = cc.Layer.extend({
             y: size.height -80
         });
         */
-
+        
+        //跳关
         var rightBtn = new cc.MenuItemImage(
             res.sd_right_png,
             res.sd_right_sel_png,
             function (btn) {
             	that.btnPubCallBack(btn);
-                that.chageGuan(1);
+            	that.showAlertX('放弃当前局，\n切换至新一局？',
+            			function(){that.chageGuan(1);}	
+            			//function(){}		
+            	);
+                
             }, this);
         rightBtn.attr({
         	x: size.width - 70,
@@ -182,35 +198,46 @@ var shuduGameMainLayer = cc.Layer.extend({
         bottomBtn.y = 0;
         this.MainNode.addChild(bottomBtn, 1);
 
-        if(shudu.gameType == 4) {
+        if(shudu.gameType == 4 || shudu.gameType == 6) {
             //玩家点击翻开按钮翻开棋子
             this.btnOpen = new cc.MenuItemImage(
                 res.sd_btnOpen,
                 res.sd_btnOpen_sel,
+                res.sd_btnOpen_dis,
                 function (btn) {
                 	that.btnPubCallBack(btn);
-                    //4x4 翻开棋子
-                    if (shudu.Q4Opened > 0 && shudu.gameData[shudu.gameData_sel]['chess']==null) {//cc.log(that.Qt); //当该格没有棋子时 执行翻开
-                        var p = that.moveChess(parseInt(that.Qt[1][shudu.gameData_sel])-1, shudu.gameData_sel);
-                        shudu.Q4Opened--;
-                        that.openNum.setString(shudu.Q4Opened);
+                	
+                  /*** **/ //4x4 翻开棋子
+                    if (shudu.QOpened > 0 && shudu.gameData[shudu.gameData_sel]['chess']==null) {//cc.log(that.Qt); //当该格没有棋子时 执行翻开
+                    	//cc.log(that.Qt[1])
+                    	var p = that.moveChess(parseInt(that.Qt[1][shudu.gameData_sel])-1, shudu.gameData_sel);
+                        shudu.QOpened--;
+                        that.openNum.setString(shudu.QOpened);
                         shudu.gameData[shudu.gameData_sel]['chess']['chenge'] = false;
                         this.showDisMove(p);
                         
                         shudu.gameData_sel = false; //当前选中的格子
                         shudu.selBtn_sel = false; //当前选中的棋子按钮
                     }
+                    
+                    if(shudu.QOpened <= 0){
+                    	that.btnOpen.setEnabled(false);
+                    }
+                    
+                    
                 },
                 this);
             
             this.btnOpen.attr({x:this.MainNode.width / 4,y:80,scale : shudu.UI.scale,});
+            
             bottomBtn.addChild(this.btnOpen, 0);
+            
             
             //4阶 重玩按钮在中间
             this.replayBtn2.attr({x:this.MainNode.width / 2,y:80});
 
             //剩余翻开机会
-            var openNum = new cc.LabelTTF(shudu.Q4Opened, 'Times New Roman', 52, cc.size(70, 70), cc.TEXT_ALIGNMENT_CENTER,0,cc.VERTICAL_TEXT_ALIGNMENT_CENTER);
+            var openNum = new cc.LabelTTF(shudu.QOpened, 'Times New Roman', 45, cc.size(70, 70), cc.TEXT_ALIGNMENT_CENTER,0,cc.VERTICAL_TEXT_ALIGNMENT_CENTER);
             openNum.attr({anchorX: 0, anchorY: 0});
             openNum.setFontFillColor(cc.color('#ffff33'));
             this.openNum = openNum;
@@ -234,11 +261,11 @@ var shuduGameMainLayer = cc.Layer.extend({
         this.MainNode.addChild(alertX, 2);
         this.alertX = alertX;
 
-        var alertxTxt = new cc.LabelTTF('',  '黑体', 30, cc.size(alertX.width-20,50), cc.TEXT_ALIGNMENT_CENTER);
+        var alertxTxt = new cc.LabelTTF('',  '黑体', 30, cc.size(alertX.width-20,100), cc.TEXT_ALIGNMENT_CENTER);
         alertxTxt.setFontFillColor(cc.color('#ffffff'));
         alertxTxt.attr({
         	x: alertX.width /2,
-        	y: 140,
+        	y: 135,
         });
         this.alertX.addChild(alertxTxt, 0);
         this.alertxTxt = alertxTxt;
@@ -269,16 +296,48 @@ var shuduGameMainLayer = cc.Layer.extend({
         		}, this);
         continues.attr({
         	x: this.alertX.width *3/4, 
-        	y: 70,
+        	y: 65,
         	scale:shudu.UI.scale
         });
+        
+        var btn_ok = new cc.MenuItemImage(
+        		res.sd_ok,
+        		res.sd_ok_sel,
+        		function (btn) {
+        			that.btnPubCallBack(btn);
+        			//cc.log(btn)
+        			if(typeof btn.cb == 'function')btn.cb();
+        			//that.replay();
+        			alertX.setVisible(false);
+        		}, this);
+        btn_ok.attr({
+        	x: this.alertX.width/4, 
+        	y: 70,
+        	//scale:shudu.UI.scale
+        });
+        var btn_cancel = new cc.MenuItemImage(
+        		res.sd_cancel,
+        		res.sd_cancel_sel,
+        		function (btn) {
+        			that.btnPubCallBack(btn);
+        			//cc.log(btn)
+        			if(typeof btn.cb == 'function')btn.cb();
+        			alertX.setVisible(false);
+        		}, this);
+        btn_cancel.attr({
+        	x: this.alertX.width *3/4, 
+        	y: 70,
+        	//scale:shudu.UI.scale
+        });
 
-        var menu = new cc.Menu(replay,continues);
+        var menu = new cc.Menu(replay,continues,btn_ok,btn_cancel);
         menu.x = 0;
         menu.y = 0;
         this.alertX.addChild(menu, 0);
         this.replayBtn = replay;
         this.continuesBtn = continues;
+        this.btn_ok = btn_ok;
+        this.btn_cancel = btn_cancel;
         //弹窗end
         
         
@@ -354,19 +413,54 @@ var shuduGameMainLayer = cc.Layer.extend({
         var userNameField = new cc.TextFieldTTF("", cc.size(410,90), cc.TEXT_ALIGNMENT_LEFT,"Arial", 72);
         userNameField.setPlaceHolder('Player1');
         userNameField.attr({
-        	x: 630,
+        	x: 635,
         	y: 260,
         });
+        //this.userNameField = userNameField;
+        jiesuan.addChild(userNameField,0, 'userName');
+        
+        /*
+        jiesuan.onTextFieldAttachWithIME = function(sender){
+
+        	userNameField.runAction(cc.repeatForever(cc.sequence(
+        			cc.fadeOut(0.4),
+        			cc.fadeIn(0.4)
+        	)));
+        	return false;
+        }
+        jiesuan.onTextFieldDetachWithIME = function(sender){
+
+        	userNameField.stopAllActions();
+        	userNameField.setOpacity(255);
+        	return false;
+        }
+        jiesuan.onTextFieldInsertText = function(sender){
+        	
+        	return false;
+        }
+        jiesuan.onTextFieldDeleteBackward = function(sender){
+        	
+        	return false;
+        }
+        
+        this.userNameField.setDelegate(jiesuan);	//jsb 不支持
+        
+        */
+        
         userNameField.onClickTrackNode = function (clicked) {
         	//var textField = this._trackNode;
         	if (clicked) {
 
         		userNameField.attachWithIME();
+        		
         	} else {
 
         		userNameField.detachWithIME();
+        		userNameField.stopAllActions();
         	}
         }
+        
+        
         //监听输入框点击事件
         var userNameFieldListener = cc.EventListener.create({
         	event: cc.EventListener.TOUCH_ONE_BY_ONE,
@@ -377,6 +471,8 @@ var shuduGameMainLayer = cc.Layer.extend({
         		//cc.log(target.visible)
         		if(target.getParent().visible)	//暂时获取父级可见属性   
         		target.onClickTrackNode(cc.rectContainsPoint(cc.rect(0, 0, target.width, target.height), p));
+        		
+        		return false;
         	},
         });
 
@@ -384,7 +480,7 @@ var shuduGameMainLayer = cc.Layer.extend({
         
         
         //userNameField.attachWithIME();
-        jiesuan.addChild(userNameField,0, 'userName');
+        
         this.MainNode.addChild(jiesuan, 2);
         this.jiesuan = jiesuan;
         //**************结算面板end
@@ -455,6 +551,8 @@ var shuduGameMainLayer = cc.Layer.extend({
         
         return true;
     },
+    
+    
     
     //按钮公共函数
     btnPubCallBack:function(btn){
@@ -537,7 +635,7 @@ var shuduGameMainLayer = cc.Layer.extend({
     		var time = shudu.gameTime;
     		var QtNum = 'Q'+shudu.gameType+'_'+this.Qt[0]; //题号
     		
-    		if(typeof topListJson[QtNum] == 'undefined'){cc.log('undefined')
+    		if(typeof topListJson[QtNum] == 'undefined'){
     			//该题没有数据 
     			topListJson[QtNum] = [];
     			topListJson[QtNum].push([userName,time]);
@@ -562,7 +660,7 @@ var shuduGameMainLayer = cc.Layer.extend({
     		}
     		
     		jsb.fileUtils.writeToFile(topListJson, topListJsonPath);
-    		cc.log( topListJson[QtNum].pop().toString());
+    		//cc.log( topListJson[QtNum].pop().toString());
 
     	}
     },
@@ -657,14 +755,14 @@ var shuduGameMainLayer = cc.Layer.extend({
     	var border = 65 ;
     	var gameType = shudu.gameType;
     	
-    	var gridWidth = this.gridWidth = (this.qipanSprite.width - 65*2)/gameType;    //格子宽度
+    	var gridWidth = this.gridWidth = (this.qipanSprite.width - border*2)/gameType;    //格子宽度
         shudu.gameData = [];
         for(var y=gameType;y>0;y--){
             for(var x=1;x<=gameType;x++){
             	shudu.gameData.push({xy:[gridWidth*x-gridWidth/2+border,gridWidth*y-gridWidth/2 + border],chess:null,selected:false});
             }
         }
-        //cc.log(shudu.gameData);
+        
     },
 
     newGame:function(type,QtId){
@@ -719,10 +817,20 @@ var shuduGameMainLayer = cc.Layer.extend({
         }else if(type == 4){
         	
         	//剩余翻开次数
-        	shudu.Q4Opened = 6;
-        	this.openNum.setString(shudu.Q4Opened);
+        	shudu.QOpened = 6;
+        	this.openNum.setString(shudu.QOpened);
+        	this.btnOpen.setEnabled(true);
         	
         	this.Qt = this.Qt4X4(QtId ? QtId : 0);  //随机题
+
+        }else if(type == 6){
+
+        	//剩余翻开次数
+        	shudu.QOpened = 12;
+        	this.openNum.setString(shudu.QOpened);
+        	this.btnOpen.setEnabled(true);
+
+        	this.Qt = this.Qt6X6(QtId ? QtId : 0);  //随机题
 
         }
         
@@ -752,10 +860,13 @@ var shuduGameMainLayer = cc.Layer.extend({
     newChess:function(chessNum){
 
         var chess = new cc.Sprite(res['sd_q3'+'_'+chessUI+'_'+chessNum]);
+        chess.scale = (this.gridWidth * 0.8)/chess.height;
         var p = this.qipanSprite.convertToNodeSpace(this.selBtn[chessNum-1].getPosition());
         chess.attr(p);
         chess.val = chessNum;
+        
         this.qipanSprite.addChild(chess, 0);
+        
         //cc.log(this.qipanSprite);
         return chess;
     },
@@ -790,6 +901,16 @@ var shuduGameMainLayer = cc.Layer.extend({
                       {x: selBtnPenal.width * 3 / 5, y: selBtnPenal.height / 2},
                       {x: selBtnPenal.width * 4 / 5, y: selBtnPenal.height / 2},
             ];
+        }else if(gameType == 6){
+        	var xy = [
+
+        	          {x: selBtnPenal.width / 7, y: selBtnPenal.height / 2},
+        	          {x: selBtnPenal.width *2/ 7, y: selBtnPenal.height / 2},
+        	          {x: selBtnPenal.width * 3 / 7, y: selBtnPenal.height / 2},
+        	          {x: selBtnPenal.width * 4 / 7, y: selBtnPenal.height / 2},
+        	          {x: selBtnPenal.width * 5 / 7, y: selBtnPenal.height / 2},
+        	          {x: selBtnPenal.width * 6 / 7, y: selBtnPenal.height / 2},
+        	          ];
         }
         //棋子按钮
         var sel = [];
@@ -842,7 +963,7 @@ var shuduGameMainLayer = cc.Layer.extend({
      */
     moveChess:function(btn,qt){
         if(shudu.gameData[qt]['chess'] && shudu.gameData[qt]['chess']['chenge'] === false) {
-            cc.log('chenge');
+            //cc.log('chenge');
             return false;    //检查棋子是否可替换
         }
         
@@ -875,12 +996,12 @@ var shuduGameMainLayer = cc.Layer.extend({
 
         		for(var i in shudu.gameData){
         			if(p.x < (shudu.gameData[i]['xy'][0]+that.gridWidth/2) && p.y <(shudu.gameData[i]['xy'][1]+that.gridWidth/2) && p.x > (shudu.gameData[i]['xy'][0]-that.gridWidth/2) && p.y >(shudu.gameData[i]['xy'][1]-that.gridWidth/2)){
-        				cc.log(i);
+        				//cc.log(i);
         				cb(i);
         				//return false;
         			}
         		}
-        		//return true;
+        		return true;
         	},
         });
         
@@ -889,8 +1010,24 @@ var shuduGameMainLayer = cc.Layer.extend({
     
     showAlertX:function(text,cb1,cb2){
     	this.alertxTxt.setString(text);
-    	this.replayBtn.cb = cb1 ? cb1:0;
-    	this.continuesBtn.cb = cb2 ? cb2:0;
+    	
+    	if(cb1){
+    		this.replayBtn.setVisible(false);
+    		this.continuesBtn.setVisible(false);
+    		this.btn_ok.setVisible(true);
+    		this.btn_cancel.setVisible(true);
+    		
+    		this.btn_ok.cb = cb1 ? cb1:0;
+    		this.btn_cancel.cb = cb2 ? cb2:0;
+    	}else{
+    		
+    		this.btn_ok.setVisible(false);
+    		this.btn_cancel.setVisible(false);
+    		this.replayBtn.setVisible(true);
+    		this.continuesBtn.setVisible(true);
+    	}
+    	
+    	
     	this.alertX.setVisible(true);
     },
     
@@ -922,7 +1059,7 @@ var shuduGameMainLayer = cc.Layer.extend({
 
                         row += gameData[i + j].chess.val;
                     }
-                    cc.log('row:' + row);
+                    //cc.log('row:' + row);
                     if (row != 6) {
 
                     	this.showAlertX('填写有误！');
@@ -948,7 +1085,14 @@ var shuduGameMainLayer = cc.Layer.extend({
                     return false;
                 }
             }
-        }
+    	}else if(shudu.gameType == 6){
+    		for(var i in this.Qt[1]){
+    			if(!gameData[i]['chess'] || this.Qt[1][i] != gameData[i]['chess']['val']){
+    				this.showAlertX('填写有误！');
+    				return false;
+    			}
+    		}
+    	}
         this.gameTimer('stop');
         this.showJiesuan(shudu.gameTime);
         return true;
@@ -1021,6 +1165,15 @@ var shuduGameMainLayer = cc.Layer.extend({
         if(id) key = id;
         return [key,Qt4_data[key].split('')];
     },
+    Qt6X6:function(id){
+    	
+    	var key = this.random(0,Qt6_data.length-1);    //随机题号
+    	if(id) key = id;
+    	//cc.log(Qt6_data[key])
+    	var Qt6 = unpackflm( Qt6_data[key] );
+    	
+    	return [key,Qt6.answer];
+    },
     random:function(start,end){
         return parseInt(Math.random()*(end-start)+start);
     }
@@ -1045,15 +1198,18 @@ var shuduGameScene = cc.Scene.extend({
         shudu.gameTime = 0;
         shudu.gameData_sel = false; //当前选中的格子
         shudu.selBtn_sel = false; //当前选中的棋子按钮
-        shudu.Q4Opened = 6;	//4阶 剩余可翻开棋子数
+        //shudu.Q4Opened = 6;	//4阶 剩余可翻开棋子数
+        shudu.QOpened = 0;	// 剩余可翻开棋子数
         //shudu.gameTimerId = null; //计时器
         
         
         var layer = new shuduGameMainLayer(this);
         this.addChild(layer);
     },
+    tt:'tt1sssssssssssss',
+    test:function(t){cc.log(t)},
     onExit:function(){
-
+    	this._super();
     	if(shudu.gameTimerId)clearInterval(shudu.gameTimerId);	//释放计时器
     }
 });

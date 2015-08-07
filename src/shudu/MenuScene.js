@@ -73,24 +73,26 @@ var shuduMenuMainLayer = cc.Layer.extend({
             res.sd_btn3d,
             function (btn2) {
             	that.btnPubCallBack(btn2);
-
-               // cc.director.runScene(new GameScene()); //进入游戏场景
+            	menuClick(btn,2);
+            	shudu.C_selMenu = 2;
 
             }, this);
         btn[2].attr({
             x: size.width / 2,
             y: size.height  - size.height*3 / 5,
             anchorX: 0.5,
-            anchorY: 0.5
+            anchorY: 0.5,
+            scale:shudu.UI.scale,
         });
-        btn[2].setEnabled(false);
-        btn[2].setVisible(false);
+        //btn[2].setEnabled(false);
+        //btn[2].setVisible(false);
 
         btn[shudu.C_selMenu].selected();
         //
         var menu = new cc.Menu(btn[0],btn[1],btn[2]);//
-        menu.x = 0;
-        menu.y = 0;
+        menu.x = size.width / 2;
+        menu.y = size.height - size.height*3 / 7;
+        menu.alignItemsVertically();
         this.MainNode.addChild(menu, 1);
 
         //游戏模式按钮
@@ -107,7 +109,7 @@ var shuduMenuMainLayer = cc.Layer.extend({
             }, this);
         sel[0].attr({
             x: size.width / 4,
-            y:  size.height / 4,
+            y:  size.height / 5,
             anchorX: 0.5,
             anchorY: 0.5,
             scale:shudu.UI.scale,
@@ -126,7 +128,7 @@ var shuduMenuMainLayer = cc.Layer.extend({
             }, this);
         sel[1].attr({
             x: size.width *3/ 4,
-            y: size.height / 4 ,
+            y: size.height / 5 ,
             anchorX: 0.5,
             anchorY: 0.5,
             scale:shudu.UI.scale,
@@ -144,7 +146,7 @@ var shuduMenuMainLayer = cc.Layer.extend({
             }, this);
         sel[2].attr({
             x: size.width *3/ 4,
-            y: size.height / 5,
+            y: size.height / 6,
             anchorX: 0.5,
             anchorY: 0.5
         });
@@ -197,7 +199,7 @@ var shuduMenuMainLayer = cc.Layer.extend({
 
             }, this);
         startBtn.x = size.width / 2;
-        startBtn.y = 100;
+        startBtn.y = 80;
         startBtn.scale = shudu.UI.scale;
         
         var pubbtn = new cc.Menu(startBtn,backBtn);

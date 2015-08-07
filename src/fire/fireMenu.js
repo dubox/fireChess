@@ -1,7 +1,7 @@
 
 
 
-//
+var fire_gameType_rj = true;//是否人机对战	
 var fireMenuLayer = cc.Layer.extend({
 	sprite:null,
 	ctor:function () {

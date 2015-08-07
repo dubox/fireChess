@@ -8,10 +8,10 @@ if(cc.winSize.width / cc.winSize.height < 9/16){
 }
 */
 
-var version = '1.1.0';
+var version = '1.5.1';
 var version_ser = getLocalJson('version');	//服务端版本(从服务端获取并存在本地的版本信息)
-var version_path = 'http://210.74.155.132:8081/firechess_en/';
-var fire_gameType_rj = true;//是否人机对战	
+var version_path = 'http://210.74.155.132:8081/firechess/';
+
 
 
 
@@ -89,10 +89,6 @@ function HttpGet(url,cb){
 			cb(xhr.responseText);
 		}  
 	};  
-	xhr.send();  
+	xhr.send();
 }
 
-function QRcallback(str){
-	
-	cc.log('QR:'+ str);
-}
