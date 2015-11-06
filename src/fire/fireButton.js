@@ -130,7 +130,7 @@ var fire_menuLayer = cc.Layer.extend({
 
 
 		//
-		cc.log(fire_gameScene)
+		
 		//骰子按钮
 		var fire_dice_btn = new cc.MenuItemImage(
 				res.fire_dices_btn,

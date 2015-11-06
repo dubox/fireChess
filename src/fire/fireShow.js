@@ -28,7 +28,7 @@ var fire_showLayer = cc.Layer.extend({
 			y: this.MainNode.height-150,
 
 		});
-		this.MainNode.addChild(fire_score_board, 0); 
+		this.MainNode.addChild(fire_score_board, 0 ,'fire_score_board'); 
 
 		//玩家a头像
 		var headImgA = new cc.Sprite(fire.userData.a.headImg);
@@ -806,7 +806,7 @@ var fire_showLayer = cc.Layer.extend({
 			};
 
 			for(var i in this.diceEnd){
-				this.diceBatchNode.addChild(this.diceEnd[i],1);cc.log(123);
+				this.diceBatchNode.addChild(this.diceEnd[i],1);
 				this.diceEnd[i].attr({
 					x: this.MainNode.width/2, 
 					y: 100,

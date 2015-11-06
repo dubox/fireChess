@@ -48,10 +48,12 @@ var mainMenuLayer = cc.Layer.extend({
 				res.main_btn_huo_sel,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
-					
-					//第三个参数为 方法签名  (参数类型)返回值类型
+					if(cc.sys.isNative && cc.sys.os == 'iOS'){
+						var u = jsb.reflection.callStaticMethod('NativeForJs', 'um_event:','fire');
+					}else{
+						//第三个参数为 方法签名  (参数类型)返回值类型
 					jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)Ljava/lang/String;", "fire");
-					
+					}
 					cc.director.runScene(new fireMenuScene());
 				}, this);
 		main_btn_huo.attr({
@@ -64,7 +66,11 @@ var mainMenuLayer = cc.Layer.extend({
 				res.main_btn_shu_sel,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
-					jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)Ljava/lang/String;", "shudu");
+					if(cc.sys.isNative && cc.sys.os == 'iOS'){
+						var u = jsb.reflection.callStaticMethod('NativeForJs', 'um_event:','shudu');
+					}else{
+						jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)Ljava/lang/String;", "shudu");
+					}
 					cc.director.runScene(new shuduMenuScene());
 				}, this);
 		main_btn_shu.attr({
@@ -76,7 +82,12 @@ var mainMenuLayer = cc.Layer.extend({
 				res.main_btn_shuSTD_sel,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
-					jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)Ljava/lang/String;", "shuduSTD");
+		                    if(cc.sys.isNative && cc.sys.os == 'iOS'){
+		                        var u = jsb.reflection.callStaticMethod('NativeForJs', 'um_event:','shuduSTD');
+		                    }else{
+		                         jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)Ljava/lang/String;", "shuduSTD");
+		                    }
+					
 					cc.director.runScene(new shuduGameScene2());
 				}, this);
 		main_btn_shuSTD.attr({
@@ -89,10 +100,16 @@ var mainMenuLayer = cc.Layer.extend({
 				res.main_btn_qita_sel,
 				function (btn) {
 					btn.getParent().pubCallBack(btn);
+					if(cc.sys.isNative && cc.sys.os == 'iOS'){
+						var u = jsb.reflection.callStaticMethod('NativeForJs', 'um_event:','qita');
+						var h = jsb.reflection.callStaticMethod('NativeForJs', 'openUrll:','http://m.lianzhong.com');
+						
+					}
+					if(cc.sys.isNative && cc.sys.os == 'Android'){
 					jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)Ljava/lang/String;", "qita");//友盟sdk
 					
 					jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "openUrll", "(Ljava/lang/String;)V", "http://m.lianzhong.com");
-					
+					}
 				}, this);
 		main_btn_qita.attr({
 			x: this.MainNode.width /2,
@@ -108,7 +125,7 @@ var mainMenuLayer = cc.Layer.extend({
 						var passW = parseInt(that.child_input.getString());
 						that.child_input.setString('');
 						if(passW <1000 || passW > 9999)return false;
-						if(typeof passW != 'number')return false;cc.log(2)
+						if(typeof passW != 'number')return false;
 						
 						if(child_lock.type){
 							if(passW == child_lock.password){
@@ -130,7 +147,10 @@ var mainMenuLayer = cc.Layer.extend({
 			y: 530,
 			scale:0.5
 		});
-		if(child_lock.type){main_btn_lock.selected()}
+		//if(child_lock.type){main_btn_lock.selected()}
+		
+		
+		
 		
 
 		var menu = new cc.Menu(main_btn_huo,main_btn_shu,main_btn_shuSTD,main_btn_qita);//,main_btn_lock
@@ -146,6 +166,29 @@ var mainMenuLayer = cc.Layer.extend({
 			
 		};
 		
+		
+		//复盘按钮
+		var main_btn_fupan = new cc.MenuItemImage(
+				res.fire_player_fupan,
+				res.fire_player_fupan_sel,
+				function (btn) {
+					cc.audioEngine.playEffect(res.fire_au_beep);
+					if(cc.sys.isNative && cc.sys.os == 'iOS'){
+						var u = jsb.reflection.callStaticMethod('NativeForJs', 'um_event:','fupan');
+					}else{
+						jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "um_event", "(Ljava/lang/String;)Ljava/lang/String;", "fupan");
+					}
+					cc.director.runScene(new fire_replayScene());
+				}, this);
+		main_btn_fupan.attr({
+			scale:0.5,
+			x: this.MainNode.width - 100,
+			y: 530
+		});
+		var menu = new cc.Menu(main_btn_fupan);//,main_btn_lock
+		menu.x = 0;
+		menu.y = 0;
+		this.MainNode.addChild(menu, 0);
 		
 		//弹窗
 		var alertX = this.alertBg(300);
@@ -383,6 +426,8 @@ var mainMenuScene = cc.Scene.extend({
 	}
 });
 
+
+/*
 //儿童锁 配置参数初始化
 var child_lock = getLocalJson('child_lock');
 if(typeof child_lock.type == 'undefined'){
@@ -396,7 +441,7 @@ if(typeof child_lock.type == 'undefined'){
 	};
 	setLocalJson('child_lock',child_lock);
 }
-/*
+
 //儿童锁 计时器
 child_lock.timer = setInterval(function(){
 	//clearInterval(child_lock.timer); return false;
@@ -412,20 +457,15 @@ child_lock.timer = setInterval(function(){
 },60*1000);
 */
 
+if(cc.sys.isNative && cc.sys.os != 'iOS'){
+	//获取最新版本信息
+	HttpGet(version_path+'version.json',function(data){
+		//if(data)
+		//cc.log(data);
+		data = JSON.parse(data);
+		setLocalJson('version',data);
+		version_ser = data;
 
-//获取最新版本信息
-HttpGet(version_path+'version.json',function(data){
-	//if(data)
-	//cc.log(data);
-	data = JSON.parse(data);
-	setLocalJson('version',data);
-	version_ser = data;
+	});
 
-});
-
-function QRcallback1(str){
-
-	cc.log('QR:'+ str);
-
-	mainMenuLayerObj.showAlertX(str,function(){},function(){});
 }

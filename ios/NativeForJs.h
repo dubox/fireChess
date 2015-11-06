@@ -7,7 +7,19 @@
 //
 
 
+
 @interface NativeForJs : NSObject
-{}
-+(NSString *)openUrll;
+{
+
+    
+
+}
+
++(NSString *)teststr;
++(BOOL)openUrll;
++(BOOL)um_event;
++(BOOL)QRscan;
++(NSString *)getQRstr;
++(NSString *)getClip;
++(UIViewController *)getCurrentVC;
 @end

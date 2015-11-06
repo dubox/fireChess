@@ -8,9 +8,9 @@ if(cc.winSize.width / cc.winSize.height < 9/16){
 }
 */
 
-var version = '1.5.1';
+var version = '1.7.0';
 var version_ser = getLocalJson('version');	//服务端版本(从服务端获取并存在本地的版本信息)
-var version_path = 'http://210.74.155.132:8081/firechess/';
+var version_path = 'http://113.140.65.67:8081/firechess/';
 
 
 
@@ -91,4 +91,50 @@ function HttpGet(url,cb){
 	};  
 	xhr.send();
 }
+
+
+var trace = function(s) {
+	var ss = '';
+	if(typeof s == 'object' || typeof s == 'array'){
+		
+		
+		function d(_s,tag){
+			if(!tag)tag = '';
+			//if(!ss)ss = '';
+			for(var i in _s){
+				if(typeof _s[i] == 'object' || typeof _s[i] == 'array'){
+					ss += tag+(i+' : \n\r');
+					d(_s[i],'-'+tag);
+				}else{
+					if(typeof _s[i] == 'undefined') _s[i] = 'undefined';
+					ss += tag+(i+' : '+_s[i].toString()+'\n\r');
+				}
+			}
+			//return ss;
+		}
+		d(s);
+		
+		ss = '\n\r'+ss;
+		//cc.log(ss);
+	}else{
+		ss = s.toString();
+		
+	}
+	cc.log(ss);
+	
+};
+
+/***
+ * 获取原生剪贴板内容
+ * 
+ */
+function getClip(){
+	if(cc.sys.isNative && cc.sys.os == 'iOS'){
+		return jsb.reflection.callStaticMethod('NativeForJs', 'getClip');
+	}else{
+		return jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getClip", "()Ljava/lang/String;");
+	}
+	
+}
+
 

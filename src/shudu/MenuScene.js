@@ -163,7 +163,7 @@ var shuduMenuMainLayer = cc.Layer.extend({
 
         //
         function menuClick(arr,k){
-            for(var i in arr){cc.log(i)
+            for(var i in arr){
 
                 arr[i].unselected();
             }

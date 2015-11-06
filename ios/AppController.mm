@@ -30,12 +30,17 @@
 #import "AppDelegate.h"
 #import "RootViewController.h"
 #import "platform/ios/CCEAGLView-ios.h"
-#import "MobClick.h"    //友盟sdk
+#import "MobClick.h"    //友盟统计sdk
+#import "UMessage.h"    //友盟推送sdk
+#import "NativeForJs.h"
 
 @implementation AppController
 
 #pragma mark -
 #pragma mark Application lifecycle
+
+#define UMSYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+#define _IPHONE80_ 80000
 
 // cocos2d application instance
 static AppDelegate s_sharedApplication;
@@ -69,8 +74,65 @@ static AppDelegate s_sharedApplication;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     
-    //  友盟的方法本身是异步执行，所以不需要再异步调用
+    //统计  友盟的方法本身是异步执行，所以不需要再异步调用
     [self umengTrack];
+    
+    //友盟推送
+    [UMessage startWithAppkey:@"557fd15367e58edd2a003c74" launchOptions:launchOptions];
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= _IPHONE80_
+    if(UMSYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0"))
+    {
+        //register remoteNotification types （iOS 8.0及其以上版本）
+        UIMutableUserNotificationAction *action1 = [[UIMutableUserNotificationAction alloc] init];
+        action1.identifier = @"action1_identifier";
+        action1.title=@"Accept";
+        action1.activationMode = UIUserNotificationActivationModeForeground;//当点击的时候启动程序
+        
+        UIMutableUserNotificationAction *action2 = [[UIMutableUserNotificationAction alloc] init];  //第二按钮
+        action2.identifier = @"action2_identifier";
+        action2.title=@"Reject";
+        action2.activationMode = UIUserNotificationActivationModeBackground;//当点击的时候不启动程序，在后台处理
+        action2.authenticationRequired = YES;//需要解锁才能处理，如果action.activationMode = UIUserNotificationActivationModeForeground;则这个属性被忽略；
+        action2.destructive = YES;
+        
+        UIMutableUserNotificationCategory *categorys = [[UIMutableUserNotificationCategory alloc] init];
+        categorys.identifier = @"category1";//这组动作的唯一标示
+        [categorys setActions:@[action1,action2] forContext:(UIUserNotificationActionContextDefault)];
+        
+        UIUserNotificationSettings *userSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge|UIUserNotificationTypeSound|UIUserNotificationTypeAlert
+                                                                                     categories:[NSSet setWithObject:categorys]];
+        [UMessage registerRemoteNotificationAndUserNotificationSettings:userSettings];
+        
+    } else{
+        //register remoteNotification types (iOS 8.0以下)
+        [UMessage registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge
+         |UIRemoteNotificationTypeSound
+         |UIRemoteNotificationTypeAlert];
+    }
+#else
+    
+    //register remoteNotification types (iOS 8.0以下)
+    [UMessage registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge
+     |UIRemoteNotificationTypeSound
+     |UIRemoteNotificationTypeAlert];
+    
+#endif
+    //for log
+    [UMessage setLogEnabled:YES];
+    
+    if (launchOptions != nil)
+    {
+        NSDictionary* pushDictionary = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+        if (pushDictionary != nil)
+        {
+            //获取自定义参数url 调用openUrll打开
+            [NativeForJs openUrll:[pushDictionary objectForKey:@"url"]];
+        }
+    }
+    
+    
+    
+    //友盟推送end
 
     // Override point for customization after application launch.
 
@@ -115,6 +177,19 @@ static AppDelegate s_sharedApplication;
     return YES;
 }
 
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
+    //友盟推送
+    [UMessage registerDeviceToken:deviceToken];
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+{
+    //友盟推送
+    [UMessage didReceiveRemoteNotification:userInfo];
+    //获取自定义参数url 调用openUrll打开
+    [NativeForJs openUrll:[userInfo objectForKey:@"url"]];
+}
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     /*

@@ -8,7 +8,7 @@
     "renderMode" : 0,
     "engineDir":"frameworks/cocos2d-html5",
 
-    "modules" : ["cocos2d"],
+    "modules" : ["cocos2d","ccui"],
 
     "jsList" : [
         "src/resource.js",
@@ -19,6 +19,9 @@
         "src/fire/fireShow.js",
         "src/fire/fireButton.js",
         "src/fire/gameScene.js",
+        "src/fire/replayInputLayer.js",
+        "src/fire/replayScene.js",
+        "src/fire/decodeWchess.js",
         "src/shudu/config.js",
         "src/shudu/Qt6_data.js",
         "src/shudu/FLMdecode.js",

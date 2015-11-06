@@ -1160,6 +1160,7 @@ var fire_gameScene = cc.Scene.extend({
 		this._super();
 		
 		//初始化游戏配置
+		fire = {};
 		fire.gameConfig={
 
 				qipanGridX:8,

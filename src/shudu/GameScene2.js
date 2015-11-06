@@ -1,5 +1,5 @@
 /*************
- * 标准6宫  扫描出题
+ * 标准6宫  扫码出题
  * 
  */
 
@@ -1224,18 +1224,26 @@ cc.eventManager.addCustomListener('afterQRscan', function(event){
 
 //轮询shudu.QRstr
 function listenQRstr(){//cc.log("listenQRstr");
-	shudu.listenQRstr = setInterval(function(){
+	
+	clearListenQRstr();
+	
+	shudu.listenQRstr = setInterval(function(){	//尝试使用 cc.director.getScheduler().schedule(callback, this, interval, !this._isRunning);
 		//cc.log("fff"); 
 			//获取扫描结果
-		var javaQRstr = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getQRstr", "()Ljava/lang/String;");
+        if(cc.sys.isNative && cc.sys.os == 'iOS'){
+            var navtiveQRstr = jsb.reflection.callStaticMethod("NativeForJs", "getQRstr");
+        }else{
+            var navtiveQRstr = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getQRstr", "()Ljava/lang/String;");
+        }
+        //cc.log("clearListenQRstr:"+navtiveQRstr);
 			//结果的第一个字符为状态
-		shudu.QRstatus = javaQRstr.substr(0,1);
-		
+        shudu.QRstatus = navtiveQRstr.substr(0,1);
+        //cc.log('status:'+shudu.QRstatus)
 		if(shudu.QRstatus == '2'){
 			//cc.eventManager.dispatchCustomEvent("afterQRscan", {QRstr:shudu.QRstr});
 			
 			clearListenQRstr();
-			shudu.QRstr = javaQRstr.substr(1);
+			shudu.QRstr = navtiveQRstr.substr(1);
 			shudu.QRstatus = 0;
 			//shudu.runtime.QRstr = shudu.QRstr;
 			shuduSTDLayerObj.newGame(shudu.gameType, 0, shudu.QRstr);
@@ -1254,11 +1262,14 @@ if(typeof shudu.listenQRstr != 'undefined')
 }
 
 function QRscan(){
-
+	clearListenQRstr();
 	listenQRstr();	
 	shudu.QRstatus = 1;
-	jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "decodeQR", "()V");
-	
+    if(cc.sys.isNative && cc.sys.os == 'iOS'){
+        jsb.reflection.callStaticMethod('NativeForJs', 'QRscan');
+    }else{
+        jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "decodeQR", "()V");
+    }
 }
 
 /******

@@ -81,6 +81,19 @@ var res = {
 		fire_rule_put3 : "res/fire/rule/put3.png",
 		fire_rule_put4 : "res/fire/rule/put4.png",
 		
+		fire_playertext_bg : "res/fire/player/text_bg.jpg",
+		fire_player_fupan : "res/fire/player/fupan.png",
+		fire_player_fupan_sel : "res/fire/player/fupan_sel.png",
+		fire_player_next : "res/fire/player/next.png",
+		fire_player_next_sel : "res/fire/player/next_sel.png",
+		fire_player_prev : "res/fire/player/prev.png",
+		fire_player_prev_sel : "res/fire/player/prev_sel.png",
+		fire_player_scan : "res/fire/player/scan.png",
+		fire_player_scan_sel : "res/fire/player/scan_sel.png",
+		fire_player_play : "res/fire/player/play.png",
+		fire_player_pause : "res/fire/player/pause.png",
+		fire_player_text : "res/fire/player/text.png",
+		
 		
 		//音频
 		fire_au_beep : "res/fire/au/beep.mp3",	//按钮

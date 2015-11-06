@@ -40,12 +40,16 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 import java.util.Timer;
-import android.view.KeyEvent; 
+import android.view.KeyEvent;
+import android.content.ClipboardManager;
+
 
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.analytics.social.UMPlatformData;
 import com.umeng.analytics.social.UMPlatformData.GENDER;
 import com.umeng.analytics.social.UMPlatformData.UMedia;
+
+import com.umeng.message.PushAgent;
 
 //import com.google.zxing.*;
 import org.Zxing.QR.CaptureActivity;
@@ -92,8 +96,14 @@ public class AppActivity extends Cocos2dxActivity{
 		MobclickAgent.openActivityDurationTrack(true);
 		MobclickAgent.setAutoLocation(true);
 		MobclickAgent.setSessionContinueMillis(1000);
-		
 		MobclickAgent.updateOnlineConfig(this);
+		
+		//友盟推送
+		PushAgent mPushAgent = PushAgent.getInstance(this);
+		mPushAgent.enable();
+		PushAgent.getInstance(this).onAppStart();
+		
+		getClip();	//需要在这里调用一次剪贴板 否则js直接调会闪退（bug原因尚不清楚）
     }
     
     @Override
@@ -134,7 +144,10 @@ public class AppActivity extends Cocos2dxActivity{
             	exitTime = System.currentTimeMillis();
             	Toast.makeText(api, "再按一次退出程序", Toast.LENGTH_SHORT).show();
             }else{
-            	android.os.Process.killProcess(android.os.Process.myPid());
+            	//android.os.Process.killProcess(android.os.Process.myPid());	//杀死进程 无法收到推送
+				//api.finish();		//无法完全退出
+				System.exit(0);
+				
             }
         }
         return super.dispatchKeyEvent(event);
@@ -242,6 +255,23 @@ public class AppActivity extends Cocos2dxActivity{
 			return "0";
 		}
     }
+	
+	/** 
+	* 获取剪贴板内容
+	* 
+	* @return 
+	*/  
+	public static String getClip()
+	{  
+		// 得到剪贴板管理器  
+		String str = "";
+		ClipboardManager cmb = (ClipboardManager)api.getSystemService(api.CLIPBOARD_SERVICE);
+		if (cmb.hasPrimaryClip()){  
+			str = cmb.getPrimaryClip().getItemAt(0).getText().toString().trim();
+		}
+		//Log.i("getClip",str);
+		return str;
+	}
     
     private static native boolean nativeIsLandScape();
     private static native boolean nativeIsDebug();

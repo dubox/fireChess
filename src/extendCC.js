@@ -51,7 +51,7 @@ cc.Node.prototype.EXT_EventListener = function( opt ){
 
 	var that = this;
 
-	return cc.EventListener.create({
+	var listener = cc.EventListener.create({
 		event: cc.EventListener[opt.event],
 		swallowTouches: true,
 		onTouchBegan: function (touch, event) {
@@ -61,8 +61,9 @@ cc.Node.prototype.EXT_EventListener = function( opt ){
 			if(target.EXT_getVisible())	//可见且为当前  
 				opt.onTouchBegan(cc.rectContainsPoint(cc.rect(0, 0, target.width, target.height), p));
 
-			return true;
+			return false;
 		},
 	});
+	cc.eventManager.addListener(listener, this);
 };
 

@@ -6,11 +6,6 @@ var shuduGameMainLayer = cc.Layer.extend({
         // 1. super init first
         this._super();
         //this.Sense = Sense;
-        
-        
-        //this.getParent().call(this);
-        //this.test(this.tt);
-        
         var that = this;
         var size = cc.winSize;
         //alert('C_selMenu='+C_selMenu+' C_selSelect='+C_selSelect);
@@ -963,7 +958,7 @@ var shuduGameMainLayer = cc.Layer.extend({
      */
     moveChess:function(btn,qt){
         if(shudu.gameData[qt]['chess'] && shudu.gameData[qt]['chess']['chenge'] === false) {
-            //cc.log('chenge');
+            
             return false;    //检查棋子是否可替换
         }
         
@@ -996,7 +991,7 @@ var shuduGameMainLayer = cc.Layer.extend({
 
         		for(var i in shudu.gameData){
         			if(p.x < (shudu.gameData[i]['xy'][0]+that.gridWidth/2) && p.y <(shudu.gameData[i]['xy'][1]+that.gridWidth/2) && p.x > (shudu.gameData[i]['xy'][0]-that.gridWidth/2) && p.y >(shudu.gameData[i]['xy'][1]-that.gridWidth/2)){
-        				//cc.log(i);
+        				
         				cb(i);
         				//return false;
         			}
@@ -1059,7 +1054,7 @@ var shuduGameMainLayer = cc.Layer.extend({
 
                         row += gameData[i + j].chess.val;
                     }
-                    //cc.log('row:' + row);
+
                     if (row != 6) {
 
                     	this.showAlertX('填写有误！');
@@ -1206,8 +1201,6 @@ var shuduGameScene = cc.Scene.extend({
         var layer = new shuduGameMainLayer(this);
         this.addChild(layer);
     },
-    tt:'tt1sssssssssssss',
-    test:function(t){cc.log(t)},
     onExit:function(){
     	this._super();
     	if(shudu.gameTimerId)clearInterval(shudu.gameTimerId);	//释放计时器
