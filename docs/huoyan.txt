@@ -1,0 +1,30 @@
+[Event "Cloud Chess Board training first"]
+[Site "Home"]
+[Date "2015.09.16"]
+[Round "1/2"]
+[White "Dejun Yuan"]
+[Black "Buting Yuan"]
+[Result "1-1"]
+
+1. e4 e6 2. Nc3 Qh4 3. Nf3 Qf6 4. e5 Qd8 5. Ng5 Be7 6. Nxf7 Kxf7 7. Be2 Ke8
+8. Bh5+ Kf8 9. Qf3+ Bf6 10. exf6 gxf6 11. O-O b6 12. b3 Bb7 13. Ba3+ Ne7
+14. Qxf6+ Kg8 15. Qf7#
+{°×·½×öÉ±} 0-1
+
+
+
+
+
+
+[Event "Cloud Chess Board training first"]
+[Site "Home"]
+[Date "2015.09.16"]
+[Round "2/2"]
+[White "Dejun Yuan"]
+[Black "Buting Yuan"]
+[Result "1-1"]
+
+1. Nc3 d5 2. e3 e6 3. Qh5 Kd7 4. Bb5+ c6 5. Qe2 Bc5 6. d4 Qg5 7. Qd3 Kd8 8.
+Rb1 Qxg2 9. dxc5 Nd7 10. Qe2 Qxh1 11. Ra1 cxb5 12. c6 Qxg1+ 13. Kd2 Nc5 14.
+Qh5 Ke8 15. Nxb5 Ne4+ 16. Nc7+ d4 17. Nxe8#
+*
